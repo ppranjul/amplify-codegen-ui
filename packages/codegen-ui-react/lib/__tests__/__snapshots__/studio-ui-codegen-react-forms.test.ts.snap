@@ -3,180 +3,11 @@
 exports[`amplify form renderer tests datastore form tests custom form tests should render a create form for model with composite keys 1`] = `
 "/* eslint-disable */
 import * as React from \\"react\\";
-import {
-  Autocomplete,
-  Badge,
-  Button,
-  Divider,
-  Flex,
-  Grid,
-  Icon,
-  ScrollView,
-  Text,
-  TextField,
-  useTheme,
-} from \\"@aws-amplify/ui-react\\";
-import {
-  getOverrideProps,
-  useDataStoreBinding,
-} from \\"@aws-amplify/ui-react/internal\\";
-import {
-  CompositeDog,
-  CompositeBowl as CompositeBowl0,
-  CompositeOwner as CompositeOwner0,
-  CompositeToy,
-  CompositeVet,
-  CompositeDogCompositeVet,
-} from \\"../models\\";
+import { Button, Flex, Grid, TextField } from \\"@aws-amplify/ui-react\\";
+import { getOverrideProps } from \\"@aws-amplify/ui-react/internal\\";
+import { CompositeDog } from \\"../models\\";
 import { fetchByPath, validateField } from \\"./utils\\";
 import { DataStore } from \\"aws-amplify\\";
-function ArrayField({
-  items = [],
-  onChange,
-  label,
-  inputFieldRef,
-  children,
-  hasError,
-  setFieldValue,
-  currentFieldValue,
-  defaultFieldValue,
-  lengthLimit,
-  getBadgeText,
-}) {
-  const labelElement = <Text>{label}</Text>;
-  const { tokens } = useTheme();
-  const [selectedBadgeIndex, setSelectedBadgeIndex] = React.useState();
-  const [isEditing, setIsEditing] = React.useState();
-  React.useEffect(() => {
-    if (isEditing) {
-      inputFieldRef?.current?.focus();
-    }
-  }, [isEditing]);
-  const removeItem = async (removeIndex) => {
-    const newItems = items.filter((value, index) => index !== removeIndex);
-    await onChange(newItems);
-    setSelectedBadgeIndex(undefined);
-  };
-  const addItem = async () => {
-    if (
-      currentFieldValue !== undefined &&
-      currentFieldValue !== null &&
-      currentFieldValue !== \\"\\" &&
-      !hasError
-    ) {
-      const newItems = [...items];
-      if (selectedBadgeIndex !== undefined) {
-        newItems[selectedBadgeIndex] = currentFieldValue;
-        setSelectedBadgeIndex(undefined);
-      } else {
-        newItems.push(currentFieldValue);
-      }
-      await onChange(newItems);
-      setIsEditing(false);
-    }
-  };
-  const arraySection = (
-    <React.Fragment>
-      {!!items?.length && (
-        <ScrollView height=\\"inherit\\" width=\\"inherit\\" maxHeight={\\"7rem\\"}>
-          {items.map((value, index) => {
-            return (
-              <Badge
-                key={index}
-                style={{
-                  cursor: \\"pointer\\",
-                  alignItems: \\"center\\",
-                  marginRight: 3,
-                  marginTop: 3,
-                  backgroundColor:
-                    index === selectedBadgeIndex ? \\"#B8CEF9\\" : \\"\\",
-                }}
-                onClick={() => {
-                  setSelectedBadgeIndex(index);
-                  setFieldValue(items[index]);
-                  setIsEditing(true);
-                }}
-              >
-                {getBadgeText ? getBadgeText(value) : value.toString()}
-                <Icon
-                  style={{
-                    cursor: \\"pointer\\",
-                    paddingLeft: 3,
-                    width: 20,
-                    height: 20,
-                  }}
-                  viewBox={{ width: 20, height: 20 }}
-                  paths={[
-                    {
-                      d: \\"M10 10l5.09-5.09L10 10l5.09 5.09L10 10zm0 0L4.91 4.91 10 10l-5.09 5.09L10 10z\\",
-                      stroke: \\"black\\",
-                    },
-                  ]}
-                  ariaLabel=\\"button\\"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    removeItem(index);
-                  }}
-                />
-              </Badge>
-            );
-          })}
-        </ScrollView>
-      )}
-      <Divider orientation=\\"horizontal\\" marginTop={5} />
-    </React.Fragment>
-  );
-  if (lengthLimit !== undefined && items.length >= lengthLimit && !isEditing) {
-    return (
-      <React.Fragment>
-        {labelElement}
-        {arraySection}
-      </React.Fragment>
-    );
-  }
-  return (
-    <React.Fragment>
-      {labelElement}
-      {isEditing && children}
-      {!isEditing ? (
-        <>
-          <Button
-            onClick={() => {
-              setIsEditing(true);
-            }}
-          >
-            Add item
-          </Button>
-        </>
-      ) : (
-        <Flex justifyContent=\\"flex-end\\">
-          {(currentFieldValue || isEditing) && (
-            <Button
-              children=\\"Cancel\\"
-              type=\\"button\\"
-              size=\\"small\\"
-              onClick={() => {
-                setFieldValue(defaultFieldValue);
-                setIsEditing(false);
-                setSelectedBadgeIndex(undefined);
-              }}
-            ></Button>
-          )}
-          <Button
-            size=\\"small\\"
-            variation=\\"link\\"
-            color={tokens.colors.brand.primary[80]}
-            isDisabled={hasError}
-            onClick={addItem}
-          >
-            {selectedBadgeIndex !== undefined ? \\"Save\\" : \\"Add\\"}
-          </Button>
-        </Flex>
-      )}
-      {arraySection}
-    </React.Fragment>
-  );
-}
 export default function CreateCompositeDogForm(props) {
   const {
     clearOnSuccess = true,
@@ -191,130 +22,20 @@ export default function CreateCompositeDogForm(props) {
   const initialValues = {
     name: \\"\\",
     description: \\"\\",
-    CompositeBowl: undefined,
-    CompositeOwner: undefined,
-    CompositeToys: [],
-    CompositeVets: [],
   };
   const [name, setName] = React.useState(initialValues.name);
   const [description, setDescription] = React.useState(
     initialValues.description
   );
-  const [CompositeBowl, setCompositeBowl] = React.useState(
-    initialValues.CompositeBowl
-  );
-  const [CompositeOwner, setCompositeOwner] = React.useState(
-    initialValues.CompositeOwner
-  );
-  const [CompositeToys, setCompositeToys] = React.useState(
-    initialValues.CompositeToys
-  );
-  const [CompositeVets, setCompositeVets] = React.useState(
-    initialValues.CompositeVets
-  );
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     setName(initialValues.name);
     setDescription(initialValues.description);
-    setCompositeBowl(initialValues.CompositeBowl);
-    setCurrentCompositeBowlValue(undefined);
-    setCurrentCompositeBowlDisplayValue(\\"\\");
-    setCompositeOwner(initialValues.CompositeOwner);
-    setCurrentCompositeOwnerValue(undefined);
-    setCurrentCompositeOwnerDisplayValue(\\"\\");
-    setCompositeToys(initialValues.CompositeToys);
-    setCurrentCompositeToysValue(undefined);
-    setCurrentCompositeToysDisplayValue(\\"\\");
-    setCompositeVets(initialValues.CompositeVets);
-    setCurrentCompositeVetsValue(undefined);
-    setCurrentCompositeVetsDisplayValue(\\"\\");
     setErrors({});
-  };
-  const [
-    currentCompositeBowlDisplayValue,
-    setCurrentCompositeBowlDisplayValue,
-  ] = React.useState(\\"\\");
-  const [currentCompositeBowlValue, setCurrentCompositeBowlValue] =
-    React.useState(undefined);
-  const CompositeBowlRef = React.createRef();
-  const [
-    currentCompositeOwnerDisplayValue,
-    setCurrentCompositeOwnerDisplayValue,
-  ] = React.useState(\\"\\");
-  const [currentCompositeOwnerValue, setCurrentCompositeOwnerValue] =
-    React.useState(undefined);
-  const CompositeOwnerRef = React.createRef();
-  const [
-    currentCompositeToysDisplayValue,
-    setCurrentCompositeToysDisplayValue,
-  ] = React.useState(\\"\\");
-  const [currentCompositeToysValue, setCurrentCompositeToysValue] =
-    React.useState(undefined);
-  const CompositeToysRef = React.createRef();
-  const [
-    currentCompositeVetsDisplayValue,
-    setCurrentCompositeVetsDisplayValue,
-  ] = React.useState(\\"\\");
-  const [currentCompositeVetsValue, setCurrentCompositeVetsValue] =
-    React.useState(undefined);
-  const CompositeVetsRef = React.createRef();
-  const getIDValue = {
-    CompositeBowl: (r) => JSON.stringify({ shape: r?.shape, size: r?.size }),
-    CompositeOwner: (r) =>
-      JSON.stringify({ lastName: r?.lastName, firstName: r?.firstName }),
-    CompositeToys: (r) => JSON.stringify({ kind: r?.kind, color: r?.color }),
-    CompositeVets: (r) =>
-      JSON.stringify({ specialty: r?.specialty, city: r?.city }),
-  };
-  const CompositeBowlIdSet = new Set(
-    Array.isArray(CompositeBowl)
-      ? CompositeBowl.map((r) => getIDValue.CompositeBowl?.(r))
-      : getIDValue.CompositeBowl?.(CompositeBowl)
-  );
-  const CompositeOwnerIdSet = new Set(
-    Array.isArray(CompositeOwner)
-      ? CompositeOwner.map((r) => getIDValue.CompositeOwner?.(r))
-      : getIDValue.CompositeOwner?.(CompositeOwner)
-  );
-  const CompositeToysIdSet = new Set(
-    Array.isArray(CompositeToys)
-      ? CompositeToys.map((r) => getIDValue.CompositeToys?.(r))
-      : getIDValue.CompositeToys?.(CompositeToys)
-  );
-  const CompositeVetsIdSet = new Set(
-    Array.isArray(CompositeVets)
-      ? CompositeVets.map((r) => getIDValue.CompositeVets?.(r))
-      : getIDValue.CompositeVets?.(CompositeVets)
-  );
-  const compositeBowlRecords = useDataStoreBinding({
-    type: \\"collection\\",
-    model: CompositeBowl0,
-  }).items;
-  const compositeOwnerRecords = useDataStoreBinding({
-    type: \\"collection\\",
-    model: CompositeOwner0,
-  }).items;
-  const compositeToyRecords = useDataStoreBinding({
-    type: \\"collection\\",
-    model: CompositeToy,
-  }).items;
-  const compositeVetRecords = useDataStoreBinding({
-    type: \\"collection\\",
-    model: CompositeVet,
-  }).items;
-  const getDisplayValue = {
-    CompositeBowl: (r) => \`\${r?.shape}\${\\" - \\"}\${r?.size}\`,
-    CompositeOwner: (r) => \`\${r?.lastName}\${\\" - \\"}\${r?.firstName}\`,
-    CompositeToys: (r) => \`\${r?.kind}\${\\" - \\"}\${r?.color}\`,
-    CompositeVets: (r) => \`\${r?.specialty}\${\\" - \\"}\${r?.city}\`,
   };
   const validations = {
     name: [{ type: \\"Required\\" }],
     description: [{ type: \\"Required\\" }],
-    CompositeBowl: [],
-    CompositeOwner: [],
-    CompositeToys: [],
-    CompositeVets: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -343,31 +64,19 @@ export default function CreateCompositeDogForm(props) {
         let modelFields = {
           name,
           description,
-          CompositeBowl,
-          CompositeOwner,
-          CompositeToys,
-          CompositeVets,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
             if (Array.isArray(modelFields[fieldName])) {
               promises.push(
                 ...modelFields[fieldName].map((item) =>
-                  runValidationTasks(
-                    fieldName,
-                    item,
-                    getDisplayValue[fieldName]
-                  )
+                  runValidationTasks(fieldName, item)
                 )
               );
               return promises;
             }
             promises.push(
-              runValidationTasks(
-                fieldName,
-                modelFields[fieldName],
-                getDisplayValue[fieldName]
-              )
+              runValidationTasks(fieldName, modelFields[fieldName])
             );
             return promises;
           }, [])
@@ -379,40 +88,7 @@ export default function CreateCompositeDogForm(props) {
           modelFields = onSubmit(modelFields);
         }
         try {
-          const compositeDog = await DataStore.save(
-            new CompositeDog({
-              ...modelFields,
-              CompositeToys: undefined,
-              CompositeVets: undefined,
-            })
-          );
-          await Promise.all(
-            CompositeToys.reduce((promises, original) => {
-              promises.push(
-                DataStore.save(
-                  CompositeToy.copyOf(original, (updated) => {
-                    updated.compositeDogCompositeToysName = compositeDog.name;
-                    updated.compositeDogCompositeToysDescription =
-                      compositeDog.description;
-                  })
-                )
-              );
-              return promises;
-            }, [])
-          );
-          await Promise.all(
-            CompositeVets.reduce((promises, compositeVet) => {
-              promises.push(
-                DataStore.save(
-                  new CompositeDogCompositeVet({
-                    compositeDog,
-                    compositeVet,
-                  })
-                )
-              );
-              return promises;
-            }, [])
-          );
+          await DataStore.save(new CompositeDog(modelFields));
           if (onSuccess) {
             onSuccess(modelFields);
           }
@@ -439,10 +115,6 @@ export default function CreateCompositeDogForm(props) {
             const modelFields = {
               name: value,
               description,
-              CompositeBowl,
-              CompositeOwner,
-              CompositeToys,
-              CompositeVets,
             };
             const result = onChange(modelFields);
             value = result?.name ?? value;
@@ -468,10 +140,6 @@ export default function CreateCompositeDogForm(props) {
             const modelFields = {
               name,
               description: value,
-              CompositeBowl,
-              CompositeOwner,
-              CompositeToys,
-              CompositeVets,
             };
             const result = onChange(modelFields);
             value = result?.description ?? value;
@@ -486,312 +154,6 @@ export default function CreateCompositeDogForm(props) {
         hasError={errors.description?.hasError}
         {...getOverrideProps(overrides, \\"description\\")}
       ></TextField>
-      <ArrayField
-        lengthLimit={1}
-        onChange={async (items) => {
-          let value = items[0];
-          if (onChange) {
-            const modelFields = {
-              name,
-              description,
-              CompositeBowl: value,
-              CompositeOwner,
-              CompositeToys,
-              CompositeVets,
-            };
-            const result = onChange(modelFields);
-            value = result?.CompositeBowl ?? value;
-          }
-          setCompositeBowl(value);
-          setCurrentCompositeBowlValue(undefined);
-          setCurrentCompositeBowlDisplayValue(\\"\\");
-        }}
-        currentFieldValue={currentCompositeBowlValue}
-        label={\\"Composite bowl\\"}
-        items={CompositeBowl ? [CompositeBowl] : []}
-        hasError={errors.CompositeBowl?.hasError}
-        getBadgeText={getDisplayValue.CompositeBowl}
-        setFieldValue={(model) => {
-          setCurrentCompositeBowlDisplayValue(
-            getDisplayValue.CompositeBowl(model)
-          );
-          setCurrentCompositeBowlValue(model);
-        }}
-        inputFieldRef={CompositeBowlRef}
-        defaultFieldValue={\\"\\"}
-      >
-        <Autocomplete
-          label=\\"Composite bowl\\"
-          isRequired={false}
-          isReadOnly={false}
-          value={currentCompositeBowlDisplayValue}
-          options={compositeBowlRecords
-            .filter(
-              (r) => !CompositeBowlIdSet.has(getIDValue.CompositeBowl?.(r))
-            )
-            .map((r) => ({
-              id: getIDValue.CompositeBowl?.(r),
-              label: getDisplayValue.CompositeBowl?.(r),
-            }))}
-          onSelect={({ id, label }) => {
-            setCurrentCompositeBowlValue(
-              compositeBowlRecords.find((r) =>
-                Object.entries(JSON.parse(id)).every(
-                  ([key, value]) => r[key] === value
-                )
-              )
-            );
-            setCurrentCompositeBowlDisplayValue(label);
-          }}
-          onClear={() => {
-            setCurrentCompositeBowlDisplayValue(\\"\\");
-          }}
-          onChange={(e) => {
-            let { value } = e.target;
-            if (errors.CompositeBowl?.hasError) {
-              runValidationTasks(\\"CompositeBowl\\", value);
-            }
-            setCurrentCompositeBowlDisplayValue(value);
-            setCurrentCompositeBowlValue(undefined);
-          }}
-          onBlur={() => runValidationTasks(\\"CompositeBowl\\", CompositeBowl)}
-          errorMessage={errors.CompositeBowl?.errorMessage}
-          hasError={errors.CompositeBowl?.hasError}
-          ref={CompositeBowlRef}
-          labelHidden={true}
-          {...getOverrideProps(overrides, \\"CompositeBowl\\")}
-        ></Autocomplete>
-      </ArrayField>
-      <ArrayField
-        lengthLimit={1}
-        onChange={async (items) => {
-          let value = items[0];
-          if (onChange) {
-            const modelFields = {
-              name,
-              description,
-              CompositeBowl,
-              CompositeOwner: value,
-              CompositeToys,
-              CompositeVets,
-            };
-            const result = onChange(modelFields);
-            value = result?.CompositeOwner ?? value;
-          }
-          setCompositeOwner(value);
-          setCurrentCompositeOwnerValue(undefined);
-          setCurrentCompositeOwnerDisplayValue(\\"\\");
-        }}
-        currentFieldValue={currentCompositeOwnerValue}
-        label={\\"Composite owner\\"}
-        items={CompositeOwner ? [CompositeOwner] : []}
-        hasError={errors.CompositeOwner?.hasError}
-        getBadgeText={getDisplayValue.CompositeOwner}
-        setFieldValue={(model) => {
-          setCurrentCompositeOwnerDisplayValue(
-            getDisplayValue.CompositeOwner(model)
-          );
-          setCurrentCompositeOwnerValue(model);
-        }}
-        inputFieldRef={CompositeOwnerRef}
-        defaultFieldValue={\\"\\"}
-      >
-        <Autocomplete
-          label=\\"Composite owner\\"
-          isRequired={false}
-          isReadOnly={false}
-          value={currentCompositeOwnerDisplayValue}
-          options={compositeOwnerRecords
-            .filter(
-              (r) => !CompositeOwnerIdSet.has(getIDValue.CompositeOwner?.(r))
-            )
-            .map((r) => ({
-              id: getIDValue.CompositeOwner?.(r),
-              label: getDisplayValue.CompositeOwner?.(r),
-            }))}
-          onSelect={({ id, label }) => {
-            setCurrentCompositeOwnerValue(
-              compositeOwnerRecords.find((r) =>
-                Object.entries(JSON.parse(id)).every(
-                  ([key, value]) => r[key] === value
-                )
-              )
-            );
-            setCurrentCompositeOwnerDisplayValue(label);
-          }}
-          onClear={() => {
-            setCurrentCompositeOwnerDisplayValue(\\"\\");
-          }}
-          onChange={(e) => {
-            let { value } = e.target;
-            if (errors.CompositeOwner?.hasError) {
-              runValidationTasks(\\"CompositeOwner\\", value);
-            }
-            setCurrentCompositeOwnerDisplayValue(value);
-            setCurrentCompositeOwnerValue(undefined);
-          }}
-          onBlur={() => runValidationTasks(\\"CompositeOwner\\", CompositeOwner)}
-          errorMessage={errors.CompositeOwner?.errorMessage}
-          hasError={errors.CompositeOwner?.hasError}
-          ref={CompositeOwnerRef}
-          labelHidden={true}
-          {...getOverrideProps(overrides, \\"CompositeOwner\\")}
-        ></Autocomplete>
-      </ArrayField>
-      <ArrayField
-        onChange={async (items) => {
-          let values = items;
-          if (onChange) {
-            const modelFields = {
-              name,
-              description,
-              CompositeBowl,
-              CompositeOwner,
-              CompositeToys: values,
-              CompositeVets,
-            };
-            const result = onChange(modelFields);
-            values = result?.CompositeToys ?? values;
-          }
-          setCompositeToys(values);
-          setCurrentCompositeToysValue(undefined);
-          setCurrentCompositeToysDisplayValue(\\"\\");
-        }}
-        currentFieldValue={currentCompositeToysValue}
-        label={\\"Composite toys\\"}
-        items={CompositeToys}
-        hasError={errors.CompositeToys?.hasError}
-        getBadgeText={getDisplayValue.CompositeToys}
-        setFieldValue={(model) => {
-          setCurrentCompositeToysDisplayValue(
-            getDisplayValue.CompositeToys(model)
-          );
-          setCurrentCompositeToysValue(model);
-        }}
-        inputFieldRef={CompositeToysRef}
-        defaultFieldValue={\\"\\"}
-      >
-        <Autocomplete
-          label=\\"Composite toys\\"
-          isRequired={false}
-          isReadOnly={false}
-          value={currentCompositeToysDisplayValue}
-          options={compositeToyRecords
-            .filter(
-              (r) => !CompositeToysIdSet.has(getIDValue.CompositeToys?.(r))
-            )
-            .map((r) => ({
-              id: getIDValue.CompositeToys?.(r),
-              label: getDisplayValue.CompositeToys?.(r),
-            }))}
-          onSelect={({ id, label }) => {
-            setCurrentCompositeToysValue(
-              compositeToyRecords.find((r) =>
-                Object.entries(JSON.parse(id)).every(
-                  ([key, value]) => r[key] === value
-                )
-              )
-            );
-            setCurrentCompositeToysDisplayValue(label);
-          }}
-          onClear={() => {
-            setCurrentCompositeToysDisplayValue(\\"\\");
-          }}
-          onChange={(e) => {
-            let { value } = e.target;
-            if (errors.CompositeToys?.hasError) {
-              runValidationTasks(\\"CompositeToys\\", value);
-            }
-            setCurrentCompositeToysDisplayValue(value);
-            setCurrentCompositeToysValue(undefined);
-          }}
-          onBlur={() =>
-            runValidationTasks(\\"CompositeToys\\", currentCompositeToysValue)
-          }
-          errorMessage={errors.CompositeToys?.errorMessage}
-          hasError={errors.CompositeToys?.hasError}
-          ref={CompositeToysRef}
-          labelHidden={true}
-          {...getOverrideProps(overrides, \\"CompositeToys\\")}
-        ></Autocomplete>
-      </ArrayField>
-      <ArrayField
-        onChange={async (items) => {
-          let values = items;
-          if (onChange) {
-            const modelFields = {
-              name,
-              description,
-              CompositeBowl,
-              CompositeOwner,
-              CompositeToys,
-              CompositeVets: values,
-            };
-            const result = onChange(modelFields);
-            values = result?.CompositeVets ?? values;
-          }
-          setCompositeVets(values);
-          setCurrentCompositeVetsValue(undefined);
-          setCurrentCompositeVetsDisplayValue(\\"\\");
-        }}
-        currentFieldValue={currentCompositeVetsValue}
-        label={\\"Composite vets\\"}
-        items={CompositeVets}
-        hasError={errors.CompositeVets?.hasError}
-        getBadgeText={getDisplayValue.CompositeVets}
-        setFieldValue={(model) => {
-          setCurrentCompositeVetsDisplayValue(
-            getDisplayValue.CompositeVets(model)
-          );
-          setCurrentCompositeVetsValue(model);
-        }}
-        inputFieldRef={CompositeVetsRef}
-        defaultFieldValue={\\"\\"}
-      >
-        <Autocomplete
-          label=\\"Composite vets\\"
-          isRequired={false}
-          isReadOnly={false}
-          value={currentCompositeVetsDisplayValue}
-          options={compositeVetRecords
-            .filter(
-              (r) => !CompositeVetsIdSet.has(getIDValue.CompositeVets?.(r))
-            )
-            .map((r) => ({
-              id: getIDValue.CompositeVets?.(r),
-              label: getDisplayValue.CompositeVets?.(r),
-            }))}
-          onSelect={({ id, label }) => {
-            setCurrentCompositeVetsValue(
-              compositeVetRecords.find((r) =>
-                Object.entries(JSON.parse(id)).every(
-                  ([key, value]) => r[key] === value
-                )
-              )
-            );
-            setCurrentCompositeVetsDisplayValue(label);
-          }}
-          onClear={() => {
-            setCurrentCompositeVetsDisplayValue(\\"\\");
-          }}
-          onChange={(e) => {
-            let { value } = e.target;
-            if (errors.CompositeVets?.hasError) {
-              runValidationTasks(\\"CompositeVets\\", value);
-            }
-            setCurrentCompositeVetsDisplayValue(value);
-            setCurrentCompositeVetsValue(undefined);
-          }}
-          onBlur={() =>
-            runValidationTasks(\\"CompositeVets\\", currentCompositeVetsValue)
-          }
-          errorMessage={errors.CompositeVets?.errorMessage}
-          hasError={errors.CompositeVets?.hasError}
-          ref={CompositeVetsRef}
-          labelHidden={true}
-          {...getOverrideProps(overrides, \\"CompositeVets\\")}
-        ></Autocomplete>
-      </ArrayField>
       <Flex
         justifyContent=\\"space-between\\"
         {...getOverrideProps(overrides, \\"CTAFlex\\")}
@@ -826,9 +188,8 @@ export default function CreateCompositeDogForm(props) {
 
 exports[`amplify form renderer tests datastore form tests custom form tests should render a create form for model with composite keys 2`] = `
 "import * as React from \\"react\\";
-import { AutocompleteProps, GridProps, TextFieldProps } from \\"@aws-amplify/ui-react\\";
+import { GridProps, TextFieldProps } from \\"@aws-amplify/ui-react\\";
 import { EscapeHatchProps } from \\"@aws-amplify/ui-react/internal\\";
-import { CompositeBowl as CompositeBowl0, CompositeOwner as CompositeOwner0, CompositeToy, CompositeVet } from \\"../models\\";
 export declare type ValidationResponse = {
     hasError: boolean;
     errorMessage?: string;
@@ -837,28 +198,16 @@ export declare type ValidationFunction<T> = (value: T, validationResponse: Valid
 export declare type CreateCompositeDogFormInputValues = {
     name?: string;
     description?: string;
-    CompositeBowl?: CompositeBowl0;
-    CompositeOwner?: CompositeOwner0;
-    CompositeToys?: CompositeToy[];
-    CompositeVets?: CompositeVet[];
 };
 export declare type CreateCompositeDogFormValidationValues = {
     name?: ValidationFunction<string>;
     description?: ValidationFunction<string>;
-    CompositeBowl?: ValidationFunction<CompositeBowl0>;
-    CompositeOwner?: ValidationFunction<CompositeOwner0>;
-    CompositeToys?: ValidationFunction<CompositeToy>;
-    CompositeVets?: ValidationFunction<CompositeVet>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type CreateCompositeDogFormOverridesProps = {
     CreateCompositeDogFormGrid?: PrimitiveOverrideProps<GridProps>;
     name?: PrimitiveOverrideProps<TextFieldProps>;
     description?: PrimitiveOverrideProps<TextFieldProps>;
-    CompositeBowl?: PrimitiveOverrideProps<AutocompleteProps>;
-    CompositeOwner?: PrimitiveOverrideProps<AutocompleteProps>;
-    CompositeToys?: PrimitiveOverrideProps<AutocompleteProps>;
-    CompositeVets?: PrimitiveOverrideProps<AutocompleteProps>;
 } & EscapeHatchProps;
 export declare type CreateCompositeDogFormProps = React.PropsWithChildren<{
     overrides?: CreateCompositeDogFormOverridesProps | undefined | null;
@@ -2714,7 +2063,6 @@ export default function MyPostForm(props) {
     post_url: \\"\\",
     metadata: undefined,
     profile_url: \\"\\",
-    nonModelField: undefined,
   };
   const [username, setUsername] = React.useState(initialValues.username);
   const [caption, setCaption] = React.useState(initialValues.caption);
@@ -2726,11 +2074,6 @@ export default function MyPostForm(props) {
   const [profile_url, setProfile_url] = React.useState(
     initialValues.profile_url
   );
-  const [nonModelField, setNonModelField] = React.useState(
-    initialValues.nonModelField
-      ? JSON.stringify(initialValues.nonModelField)
-      : undefined
-  );
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     setUsername(initialValues.username);
@@ -2740,7 +2083,6 @@ export default function MyPostForm(props) {
     setPost_url(initialValues.post_url);
     setMetadata(initialValues.metadata);
     setProfile_url(initialValues.profile_url);
-    setNonModelField(initialValues.nonModelField);
     setErrors({});
   };
   const [currentCustomtagsValue, setCurrentCustomtagsValue] =
@@ -2759,7 +2101,6 @@ export default function MyPostForm(props) {
     post_url: [{ type: \\"URL\\" }],
     metadata: [{ type: \\"JSON\\" }],
     profile_url: [{ type: \\"URL\\" }],
-    nonModelField: [{ type: \\"JSON\\" }],
   };
   const runValidationTasks = async (
     fieldName,
@@ -2792,7 +2133,6 @@ export default function MyPostForm(props) {
           post_url: post_url || undefined,
           metadata,
           profile_url: profile_url || undefined,
-          nonModelField: nonModelField || undefined,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -2889,7 +2229,6 @@ export default function MyPostForm(props) {
                 post_url,
                 metadata,
                 profile_url,
-                nonModelField,
               };
               const result = onChange(modelFields);
               value = result?.username ?? value;
@@ -2920,7 +2259,6 @@ export default function MyPostForm(props) {
                 post_url,
                 metadata,
                 profile_url,
-                nonModelField,
               };
               const result = onChange(modelFields);
               value = result?.caption ?? value;
@@ -2947,7 +2285,6 @@ export default function MyPostForm(props) {
               post_url,
               metadata,
               profile_url,
-              nonModelField,
             };
             const result = onChange(modelFields);
             values = result?.Customtags ?? values;
@@ -2999,7 +2336,6 @@ export default function MyPostForm(props) {
               post_url: value,
               metadata,
               profile_url,
-              nonModelField,
             };
             const result = onChange(modelFields);
             value = result?.post_url ?? value;
@@ -3028,7 +2364,6 @@ export default function MyPostForm(props) {
               post_url,
               metadata: value,
               profile_url,
-              nonModelField,
             };
             const result = onChange(modelFields);
             value = result?.metadata ?? value;
@@ -3058,7 +2393,6 @@ export default function MyPostForm(props) {
               post_url,
               metadata,
               profile_url: value,
-              nonModelField,
             };
             const result = onChange(modelFields);
             value = result?.profile_url ?? value;
@@ -3073,35 +2407,6 @@ export default function MyPostForm(props) {
         hasError={errors.profile_url?.hasError}
         {...getOverrideProps(overrides, \\"profile_url\\")}
       ></TextField>
-      <TextAreaField
-        label=\\"Non model field\\"
-        isRequired={false}
-        isReadOnly={false}
-        onChange={(e) => {
-          let { value } = e.target;
-          if (onChange) {
-            const modelFields = {
-              username,
-              caption,
-              Customtags,
-              post_url,
-              metadata,
-              profile_url,
-              nonModelField: value,
-            };
-            const result = onChange(modelFields);
-            value = result?.nonModelField ?? value;
-          }
-          if (errors.nonModelField?.hasError) {
-            runValidationTasks(\\"nonModelField\\", value);
-          }
-          setNonModelField(value);
-        }}
-        onBlur={() => runValidationTasks(\\"nonModelField\\", nonModelField)}
-        errorMessage={errors.nonModelField?.errorMessage}
-        hasError={errors.nonModelField?.hasError}
-        {...getOverrideProps(overrides, \\"nonModelField\\")}
-      ></TextAreaField>
     </Grid>
   );
 }
@@ -3124,7 +2429,6 @@ export declare type MyPostFormInputValues = {
     post_url?: string;
     metadata?: string;
     profile_url?: string;
-    nonModelField?: string;
 };
 export declare type MyPostFormValidationValues = {
     username?: ValidationFunction<string>;
@@ -3133,7 +2437,6 @@ export declare type MyPostFormValidationValues = {
     post_url?: ValidationFunction<string>;
     metadata?: ValidationFunction<string>;
     profile_url?: ValidationFunction<string>;
-    nonModelField?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type MyPostFormOverridesProps = {
@@ -3145,7 +2448,6 @@ export declare type MyPostFormOverridesProps = {
     post_url?: PrimitiveOverrideProps<TextFieldProps>;
     metadata?: PrimitiveOverrideProps<TextAreaFieldProps>;
     profile_url?: PrimitiveOverrideProps<TextFieldProps>;
-    nonModelField?: PrimitiveOverrideProps<TextAreaFieldProps>;
 } & EscapeHatchProps;
 export declare type MyPostFormProps = React.PropsWithChildren<{
     overrides?: MyPostFormOverridesProps | undefined | null;
@@ -3165,180 +2467,11 @@ export default function MyPostForm(props: MyPostFormProps): React.ReactElement;
 exports[`amplify form renderer tests datastore form tests custom form tests should render an update form for model with composite keys 1`] = `
 "/* eslint-disable */
 import * as React from \\"react\\";
-import {
-  Autocomplete,
-  Badge,
-  Button,
-  Divider,
-  Flex,
-  Grid,
-  Icon,
-  ScrollView,
-  Text,
-  TextField,
-  useTheme,
-} from \\"@aws-amplify/ui-react\\";
-import {
-  getOverrideProps,
-  useDataStoreBinding,
-} from \\"@aws-amplify/ui-react/internal\\";
-import {
-  CompositeDog,
-  CompositeBowl as CompositeBowl0,
-  CompositeOwner as CompositeOwner0,
-  CompositeToy,
-  CompositeVet,
-  CompositeDogCompositeVet,
-} from \\"../models\\";
+import { Button, Flex, Grid, TextField } from \\"@aws-amplify/ui-react\\";
+import { getOverrideProps } from \\"@aws-amplify/ui-react/internal\\";
+import { CompositeDog } from \\"../models\\";
 import { fetchByPath, validateField } from \\"./utils\\";
 import { DataStore } from \\"aws-amplify\\";
-function ArrayField({
-  items = [],
-  onChange,
-  label,
-  inputFieldRef,
-  children,
-  hasError,
-  setFieldValue,
-  currentFieldValue,
-  defaultFieldValue,
-  lengthLimit,
-  getBadgeText,
-}) {
-  const labelElement = <Text>{label}</Text>;
-  const { tokens } = useTheme();
-  const [selectedBadgeIndex, setSelectedBadgeIndex] = React.useState();
-  const [isEditing, setIsEditing] = React.useState();
-  React.useEffect(() => {
-    if (isEditing) {
-      inputFieldRef?.current?.focus();
-    }
-  }, [isEditing]);
-  const removeItem = async (removeIndex) => {
-    const newItems = items.filter((value, index) => index !== removeIndex);
-    await onChange(newItems);
-    setSelectedBadgeIndex(undefined);
-  };
-  const addItem = async () => {
-    if (
-      currentFieldValue !== undefined &&
-      currentFieldValue !== null &&
-      currentFieldValue !== \\"\\" &&
-      !hasError
-    ) {
-      const newItems = [...items];
-      if (selectedBadgeIndex !== undefined) {
-        newItems[selectedBadgeIndex] = currentFieldValue;
-        setSelectedBadgeIndex(undefined);
-      } else {
-        newItems.push(currentFieldValue);
-      }
-      await onChange(newItems);
-      setIsEditing(false);
-    }
-  };
-  const arraySection = (
-    <React.Fragment>
-      {!!items?.length && (
-        <ScrollView height=\\"inherit\\" width=\\"inherit\\" maxHeight={\\"7rem\\"}>
-          {items.map((value, index) => {
-            return (
-              <Badge
-                key={index}
-                style={{
-                  cursor: \\"pointer\\",
-                  alignItems: \\"center\\",
-                  marginRight: 3,
-                  marginTop: 3,
-                  backgroundColor:
-                    index === selectedBadgeIndex ? \\"#B8CEF9\\" : \\"\\",
-                }}
-                onClick={() => {
-                  setSelectedBadgeIndex(index);
-                  setFieldValue(items[index]);
-                  setIsEditing(true);
-                }}
-              >
-                {getBadgeText ? getBadgeText(value) : value.toString()}
-                <Icon
-                  style={{
-                    cursor: \\"pointer\\",
-                    paddingLeft: 3,
-                    width: 20,
-                    height: 20,
-                  }}
-                  viewBox={{ width: 20, height: 20 }}
-                  paths={[
-                    {
-                      d: \\"M10 10l5.09-5.09L10 10l5.09 5.09L10 10zm0 0L4.91 4.91 10 10l-5.09 5.09L10 10z\\",
-                      stroke: \\"black\\",
-                    },
-                  ]}
-                  ariaLabel=\\"button\\"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    removeItem(index);
-                  }}
-                />
-              </Badge>
-            );
-          })}
-        </ScrollView>
-      )}
-      <Divider orientation=\\"horizontal\\" marginTop={5} />
-    </React.Fragment>
-  );
-  if (lengthLimit !== undefined && items.length >= lengthLimit && !isEditing) {
-    return (
-      <React.Fragment>
-        {labelElement}
-        {arraySection}
-      </React.Fragment>
-    );
-  }
-  return (
-    <React.Fragment>
-      {labelElement}
-      {isEditing && children}
-      {!isEditing ? (
-        <>
-          <Button
-            onClick={() => {
-              setIsEditing(true);
-            }}
-          >
-            Add item
-          </Button>
-        </>
-      ) : (
-        <Flex justifyContent=\\"flex-end\\">
-          {(currentFieldValue || isEditing) && (
-            <Button
-              children=\\"Cancel\\"
-              type=\\"button\\"
-              size=\\"small\\"
-              onClick={() => {
-                setFieldValue(defaultFieldValue);
-                setIsEditing(false);
-                setSelectedBadgeIndex(undefined);
-              }}
-            ></Button>
-          )}
-          <Button
-            size=\\"small\\"
-            variation=\\"link\\"
-            color={tokens.colors.brand.primary[80]}
-            isDisabled={hasError}
-            onClick={addItem}
-          >
-            {selectedBadgeIndex !== undefined ? \\"Save\\" : \\"Add\\"}
-          </Button>
-        </Flex>
-      )}
-      {arraySection}
-    </React.Fragment>
-  );
-}
 export default function UpdateCompositeDogForm(props) {
   const {
     name: nameProp,
@@ -3354,182 +2487,35 @@ export default function UpdateCompositeDogForm(props) {
   const initialValues = {
     name: \\"\\",
     description: \\"\\",
-    CompositeBowl: undefined,
-    CompositeOwner: undefined,
-    CompositeToys: [],
-    CompositeVets: [],
   };
   const [name, setName] = React.useState(initialValues.name);
   const [description, setDescription] = React.useState(
     initialValues.description
   );
-  const [CompositeBowl, setCompositeBowl] = React.useState(
-    initialValues.CompositeBowl
-  );
-  const [CompositeOwner, setCompositeOwner] = React.useState(
-    initialValues.CompositeOwner
-  );
-  const [CompositeToys, setCompositeToys] = React.useState(
-    initialValues.CompositeToys
-  );
-  const [CompositeVets, setCompositeVets] = React.useState(
-    initialValues.CompositeVets
-  );
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     const cleanValues = compositeDogRecord
-      ? {
-          ...initialValues,
-          ...compositeDogRecord,
-          CompositeBowl,
-          CompositeOwner,
-          CompositeToys: linkedCompositeToys,
-          CompositeVets: linkedCompositeVets,
-        }
+      ? { ...initialValues, ...compositeDogRecord }
       : initialValues;
     setName(cleanValues.name);
     setDescription(cleanValues.description);
-    setCompositeBowl(cleanValues.CompositeBowl);
-    setCurrentCompositeBowlValue(undefined);
-    setCurrentCompositeBowlDisplayValue(\\"\\");
-    setCompositeOwner(cleanValues.CompositeOwner);
-    setCurrentCompositeOwnerValue(undefined);
-    setCurrentCompositeOwnerDisplayValue(\\"\\");
-    setCompositeToys(cleanValues.CompositeToys ?? []);
-    setCurrentCompositeToysValue(undefined);
-    setCurrentCompositeToysDisplayValue(\\"\\");
-    setCompositeVets(cleanValues.CompositeVets ?? []);
-    setCurrentCompositeVetsValue(undefined);
-    setCurrentCompositeVetsDisplayValue(\\"\\");
     setErrors({});
   };
   const [compositeDogRecord, setCompositeDogRecord] =
     React.useState(compositeDog);
-  const [linkedCompositeToys, setLinkedCompositeToys] = React.useState([]);
-  const [linkedCompositeVets, setLinkedCompositeVets] = React.useState([]);
   React.useEffect(() => {
     const queryData = async () => {
       const record = nameProp
         ? await DataStore.query(CompositeDog, nameProp)
         : compositeDog;
       setCompositeDogRecord(record);
-      const CompositeBowlRecord = record
-        ? await record.CompositeBowl
-        : undefined;
-      setCompositeBowl(CompositeBowlRecord);
-      const CompositeOwnerRecord = record
-        ? await record.CompositeOwner
-        : undefined;
-      setCompositeOwner(CompositeOwnerRecord);
-      const linkedCompositeToys = record
-        ? await record.CompositeToys.toArray()
-        : [];
-      setLinkedCompositeToys(linkedCompositeToys);
-      const linkedCompositeVets = record
-        ? await Promise.all(
-            (
-              await record.CompositeVets.toArray()
-            ).map((r) => {
-              return r.compositeVet;
-            })
-          )
-        : [];
-      setLinkedCompositeVets(linkedCompositeVets);
     };
     queryData();
   }, [nameProp, compositeDog]);
-  React.useEffect(resetStateValues, [
-    compositeDogRecord,
-    CompositeBowl,
-    CompositeOwner,
-    linkedCompositeToys,
-    linkedCompositeVets,
-  ]);
-  const [
-    currentCompositeBowlDisplayValue,
-    setCurrentCompositeBowlDisplayValue,
-  ] = React.useState(\\"\\");
-  const [currentCompositeBowlValue, setCurrentCompositeBowlValue] =
-    React.useState(undefined);
-  const CompositeBowlRef = React.createRef();
-  const [
-    currentCompositeOwnerDisplayValue,
-    setCurrentCompositeOwnerDisplayValue,
-  ] = React.useState(\\"\\");
-  const [currentCompositeOwnerValue, setCurrentCompositeOwnerValue] =
-    React.useState(undefined);
-  const CompositeOwnerRef = React.createRef();
-  const [
-    currentCompositeToysDisplayValue,
-    setCurrentCompositeToysDisplayValue,
-  ] = React.useState(\\"\\");
-  const [currentCompositeToysValue, setCurrentCompositeToysValue] =
-    React.useState(undefined);
-  const CompositeToysRef = React.createRef();
-  const [
-    currentCompositeVetsDisplayValue,
-    setCurrentCompositeVetsDisplayValue,
-  ] = React.useState(\\"\\");
-  const [currentCompositeVetsValue, setCurrentCompositeVetsValue] =
-    React.useState(undefined);
-  const CompositeVetsRef = React.createRef();
-  const getIDValue = {
-    CompositeBowl: (r) => JSON.stringify({ shape: r?.shape, size: r?.size }),
-    CompositeOwner: (r) =>
-      JSON.stringify({ lastName: r?.lastName, firstName: r?.firstName }),
-    CompositeToys: (r) => JSON.stringify({ kind: r?.kind, color: r?.color }),
-    CompositeVets: (r) =>
-      JSON.stringify({ specialty: r?.specialty, city: r?.city }),
-  };
-  const CompositeBowlIdSet = new Set(
-    Array.isArray(CompositeBowl)
-      ? CompositeBowl.map((r) => getIDValue.CompositeBowl?.(r))
-      : getIDValue.CompositeBowl?.(CompositeBowl)
-  );
-  const CompositeOwnerIdSet = new Set(
-    Array.isArray(CompositeOwner)
-      ? CompositeOwner.map((r) => getIDValue.CompositeOwner?.(r))
-      : getIDValue.CompositeOwner?.(CompositeOwner)
-  );
-  const CompositeToysIdSet = new Set(
-    Array.isArray(CompositeToys)
-      ? CompositeToys.map((r) => getIDValue.CompositeToys?.(r))
-      : getIDValue.CompositeToys?.(CompositeToys)
-  );
-  const CompositeVetsIdSet = new Set(
-    Array.isArray(CompositeVets)
-      ? CompositeVets.map((r) => getIDValue.CompositeVets?.(r))
-      : getIDValue.CompositeVets?.(CompositeVets)
-  );
-  const compositeBowlRecords = useDataStoreBinding({
-    type: \\"collection\\",
-    model: CompositeBowl0,
-  }).items;
-  const compositeOwnerRecords = useDataStoreBinding({
-    type: \\"collection\\",
-    model: CompositeOwner0,
-  }).items;
-  const compositeToyRecords = useDataStoreBinding({
-    type: \\"collection\\",
-    model: CompositeToy,
-  }).items;
-  const compositeVetRecords = useDataStoreBinding({
-    type: \\"collection\\",
-    model: CompositeVet,
-  }).items;
-  const getDisplayValue = {
-    CompositeBowl: (r) => \`\${r?.shape}\${\\" - \\"}\${r?.size}\`,
-    CompositeOwner: (r) => \`\${r?.lastName}\${\\" - \\"}\${r?.firstName}\`,
-    CompositeToys: (r) => \`\${r?.kind}\${\\" - \\"}\${r?.color}\`,
-    CompositeVets: (r) => \`\${r?.specialty}\${\\" - \\"}\${r?.city}\`,
-  };
+  React.useEffect(resetStateValues, [compositeDogRecord]);
   const validations = {
     name: [{ type: \\"Required\\" }],
     description: [{ type: \\"Required\\" }],
-    CompositeBowl: [],
-    CompositeOwner: [],
-    CompositeToys: [],
-    CompositeVets: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -3558,31 +2544,19 @@ export default function UpdateCompositeDogForm(props) {
         let modelFields = {
           name,
           description,
-          CompositeBowl,
-          CompositeOwner,
-          CompositeToys,
-          CompositeVets,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
             if (Array.isArray(modelFields[fieldName])) {
               promises.push(
                 ...modelFields[fieldName].map((item) =>
-                  runValidationTasks(
-                    fieldName,
-                    item,
-                    getDisplayValue[fieldName]
-                  )
+                  runValidationTasks(fieldName, item)
                 )
               );
               return promises;
             }
             promises.push(
-              runValidationTasks(
-                fieldName,
-                modelFields[fieldName],
-                getDisplayValue[fieldName]
-              )
+              runValidationTasks(fieldName, modelFields[fieldName])
             );
             return promises;
           }, [])
@@ -3594,141 +2568,11 @@ export default function UpdateCompositeDogForm(props) {
           modelFields = onSubmit(modelFields);
         }
         try {
-          const promises = [];
-          const compositeToysToLink = [];
-          const compositeToysToUnLink = [];
-          const compositeToysSet = new Set();
-          const linkedCompositeToysSet = new Set();
-          CompositeToys.forEach((r) =>
-            compositeToysSet.add(getIDValue.CompositeToys?.(r))
+          await DataStore.save(
+            CompositeDog.copyOf(compositeDogRecord, (updated) => {
+              Object.assign(updated, modelFields);
+            })
           );
-          linkedCompositeToys.forEach((r) =>
-            linkedCompositeToysSet.add(getIDValue.CompositeToys?.(r))
-          );
-          linkedCompositeToys.forEach((r) => {
-            if (!compositeToysSet.has(getIDValue.CompositeToys?.(r))) {
-              compositeToysToUnLink.push(r);
-            }
-          });
-          CompositeToys.forEach((r) => {
-            if (!linkedCompositeToysSet.has(getIDValue.CompositeToys?.(r))) {
-              compositeToysToLink.push(r);
-            }
-          });
-          compositeToysToUnLink.forEach((original) => {
-            promises.push(
-              DataStore.save(
-                CompositeToy.copyOf(original, (updated) => {
-                  updated.compositeDogCompositeToysName = null;
-                  updated.compositeDogCompositeToysDescription = null;
-                })
-              )
-            );
-          });
-          compositeToysToLink.forEach((original) => {
-            promises.push(
-              DataStore.save(
-                CompositeToy.copyOf(original, (updated) => {
-                  updated.compositeDogCompositeToysName =
-                    compositeDogRecord.name;
-                  updated.compositeDogCompositeToysDescription =
-                    compositeDogRecord.description;
-                })
-              )
-            );
-          });
-          const compositeVetsToLinkMap = new Map();
-          const compositeVetsToUnLinkMap = new Map();
-          const compositeVetsMap = new Map();
-          const linkedCompositeVetsMap = new Map();
-          CompositeVets.forEach((r) => {
-            const count = compositeVetsMap.get(getIDValue.CompositeVets?.(r));
-            const newCount = count ? count + 1 : 1;
-            compositeVetsMap.set(getIDValue.CompositeVets?.(r), newCount);
-          });
-          linkedCompositeVets.forEach((r) => {
-            const count = linkedCompositeVetsMap.get(
-              getIDValue.CompositeVets?.(r)
-            );
-            const newCount = count ? count + 1 : 1;
-            linkedCompositeVetsMap.set(getIDValue.CompositeVets?.(r), newCount);
-          });
-          linkedCompositeVetsMap.forEach((count, id) => {
-            const newCount = compositeVetsMap.get(id);
-            if (newCount) {
-              const diffCount = count - newCount;
-              if (diffCount > 0) {
-                compositeVetsToUnLinkMap.set(id, diffCount);
-              }
-            } else {
-              compositeVetsToUnLinkMap.set(id, count);
-            }
-          });
-          compositeVetsMap.forEach((count, id) => {
-            const originalCount = linkedCompositeVetsMap.get(id);
-            if (originalCount) {
-              const diffCount = count - originalCount;
-              if (diffCount > 0) {
-                compositeVetsToLinkMap.set(id, diffCount);
-              }
-            } else {
-              compositeVetsToLinkMap.set(id, count);
-            }
-          });
-          compositeVetsToUnLinkMap.forEach(async (count, id) => {
-            const compositeDogCompositeVetRecords = await DataStore.query(
-              CompositeDogCompositeVet,
-              (r) =>
-                r.and((r) => {
-                  const recordKeys = JSON.parse(id);
-                  return [
-                    r.compositeVetSpecialty.eq(recordKeys.specialty),
-                    r.compositeVetcity.eq(recordKeys.city),
-                    r.compositeDogName.eq(compositeDogRecord.name),
-                    r.compositeDogdescription.eq(
-                      compositeDogRecord.description
-                    ),
-                  ];
-                })
-            );
-            for (let i = 0; i < count; i++) {
-              promises.push(
-                DataStore.delete(compositeDogCompositeVetRecords[i])
-              );
-            }
-          });
-          compositeVetsToLinkMap.forEach((count, id) => {
-            for (let i = count; i > 0; i--) {
-              promises.push(
-                DataStore.save(
-                  new CompositeDogCompositeVet({
-                    compositeDog: compositeDogRecord,
-                    compositeVet: compositeVetRecords.find((r) =>
-                      Object.entries(JSON.parse(id)).every(
-                        ([key, value]) => r[key] === value
-                      )
-                    ),
-                  })
-                )
-              );
-            }
-          });
-          promises.push(
-            DataStore.save(
-              CompositeDog.copyOf(compositeDogRecord, (updated) => {
-                Object.assign(updated, modelFields);
-                if (!modelFields.CompositeBowl) {
-                  updated.compositeDogCompositeBowlShape = undefined;
-                  updated.compositeDogCompositeBowlSize = undefined;
-                }
-                if (!modelFields.CompositeOwner) {
-                  updated.compositeDogCompositeOwnerLastName = undefined;
-                  updated.compositeDogCompositeOwnerFirstName = undefined;
-                }
-              })
-            )
-          );
-          await Promise.all(promises);
           if (onSuccess) {
             onSuccess(modelFields);
           }
@@ -3752,10 +2596,6 @@ export default function UpdateCompositeDogForm(props) {
             const modelFields = {
               name: value,
               description,
-              CompositeBowl,
-              CompositeOwner,
-              CompositeToys,
-              CompositeVets,
             };
             const result = onChange(modelFields);
             value = result?.name ?? value;
@@ -3781,10 +2621,6 @@ export default function UpdateCompositeDogForm(props) {
             const modelFields = {
               name,
               description: value,
-              CompositeBowl,
-              CompositeOwner,
-              CompositeToys,
-              CompositeVets,
             };
             const result = onChange(modelFields);
             value = result?.description ?? value;
@@ -3799,314 +2635,6 @@ export default function UpdateCompositeDogForm(props) {
         hasError={errors.description?.hasError}
         {...getOverrideProps(overrides, \\"description\\")}
       ></TextField>
-      <ArrayField
-        lengthLimit={1}
-        onChange={async (items) => {
-          let value = items[0];
-          if (onChange) {
-            const modelFields = {
-              name,
-              description,
-              CompositeBowl: value,
-              CompositeOwner,
-              CompositeToys,
-              CompositeVets,
-            };
-            const result = onChange(modelFields);
-            value = result?.CompositeBowl ?? value;
-          }
-          setCompositeBowl(value);
-          setCurrentCompositeBowlValue(undefined);
-          setCurrentCompositeBowlDisplayValue(\\"\\");
-        }}
-        currentFieldValue={currentCompositeBowlValue}
-        label={\\"Composite bowl\\"}
-        items={CompositeBowl ? [CompositeBowl] : []}
-        hasError={errors.CompositeBowl?.hasError}
-        getBadgeText={getDisplayValue.CompositeBowl}
-        setFieldValue={(model) => {
-          setCurrentCompositeBowlDisplayValue(
-            getDisplayValue.CompositeBowl(model)
-          );
-          setCurrentCompositeBowlValue(model);
-        }}
-        inputFieldRef={CompositeBowlRef}
-        defaultFieldValue={\\"\\"}
-      >
-        <Autocomplete
-          label=\\"Composite bowl\\"
-          isRequired={false}
-          isReadOnly={false}
-          value={currentCompositeBowlDisplayValue}
-          options={compositeBowlRecords
-            .filter(
-              (r) => !CompositeBowlIdSet.has(getIDValue.CompositeBowl?.(r))
-            )
-            .map((r) => ({
-              id: getIDValue.CompositeBowl?.(r),
-              label: getDisplayValue.CompositeBowl?.(r),
-            }))}
-          onSelect={({ id, label }) => {
-            setCurrentCompositeBowlValue(
-              compositeBowlRecords.find((r) =>
-                Object.entries(JSON.parse(id)).every(
-                  ([key, value]) => r[key] === value
-                )
-              )
-            );
-            setCurrentCompositeBowlDisplayValue(label);
-          }}
-          onClear={() => {
-            setCurrentCompositeBowlDisplayValue(\\"\\");
-          }}
-          defaultValue={CompositeBowl}
-          onChange={(e) => {
-            let { value } = e.target;
-            if (errors.CompositeBowl?.hasError) {
-              runValidationTasks(\\"CompositeBowl\\", value);
-            }
-            setCurrentCompositeBowlDisplayValue(value);
-            setCurrentCompositeBowlValue(undefined);
-          }}
-          onBlur={() => runValidationTasks(\\"CompositeBowl\\", CompositeBowl)}
-          errorMessage={errors.CompositeBowl?.errorMessage}
-          hasError={errors.CompositeBowl?.hasError}
-          ref={CompositeBowlRef}
-          labelHidden={true}
-          {...getOverrideProps(overrides, \\"CompositeBowl\\")}
-        ></Autocomplete>
-      </ArrayField>
-      <ArrayField
-        lengthLimit={1}
-        onChange={async (items) => {
-          let value = items[0];
-          if (onChange) {
-            const modelFields = {
-              name,
-              description,
-              CompositeBowl,
-              CompositeOwner: value,
-              CompositeToys,
-              CompositeVets,
-            };
-            const result = onChange(modelFields);
-            value = result?.CompositeOwner ?? value;
-          }
-          setCompositeOwner(value);
-          setCurrentCompositeOwnerValue(undefined);
-          setCurrentCompositeOwnerDisplayValue(\\"\\");
-        }}
-        currentFieldValue={currentCompositeOwnerValue}
-        label={\\"Composite owner\\"}
-        items={CompositeOwner ? [CompositeOwner] : []}
-        hasError={errors.CompositeOwner?.hasError}
-        getBadgeText={getDisplayValue.CompositeOwner}
-        setFieldValue={(model) => {
-          setCurrentCompositeOwnerDisplayValue(
-            getDisplayValue.CompositeOwner(model)
-          );
-          setCurrentCompositeOwnerValue(model);
-        }}
-        inputFieldRef={CompositeOwnerRef}
-        defaultFieldValue={\\"\\"}
-      >
-        <Autocomplete
-          label=\\"Composite owner\\"
-          isRequired={false}
-          isReadOnly={false}
-          value={currentCompositeOwnerDisplayValue}
-          options={compositeOwnerRecords
-            .filter(
-              (r) => !CompositeOwnerIdSet.has(getIDValue.CompositeOwner?.(r))
-            )
-            .map((r) => ({
-              id: getIDValue.CompositeOwner?.(r),
-              label: getDisplayValue.CompositeOwner?.(r),
-            }))}
-          onSelect={({ id, label }) => {
-            setCurrentCompositeOwnerValue(
-              compositeOwnerRecords.find((r) =>
-                Object.entries(JSON.parse(id)).every(
-                  ([key, value]) => r[key] === value
-                )
-              )
-            );
-            setCurrentCompositeOwnerDisplayValue(label);
-          }}
-          onClear={() => {
-            setCurrentCompositeOwnerDisplayValue(\\"\\");
-          }}
-          defaultValue={CompositeOwner}
-          onChange={(e) => {
-            let { value } = e.target;
-            if (errors.CompositeOwner?.hasError) {
-              runValidationTasks(\\"CompositeOwner\\", value);
-            }
-            setCurrentCompositeOwnerDisplayValue(value);
-            setCurrentCompositeOwnerValue(undefined);
-          }}
-          onBlur={() => runValidationTasks(\\"CompositeOwner\\", CompositeOwner)}
-          errorMessage={errors.CompositeOwner?.errorMessage}
-          hasError={errors.CompositeOwner?.hasError}
-          ref={CompositeOwnerRef}
-          labelHidden={true}
-          {...getOverrideProps(overrides, \\"CompositeOwner\\")}
-        ></Autocomplete>
-      </ArrayField>
-      <ArrayField
-        onChange={async (items) => {
-          let values = items;
-          if (onChange) {
-            const modelFields = {
-              name,
-              description,
-              CompositeBowl,
-              CompositeOwner,
-              CompositeToys: values,
-              CompositeVets,
-            };
-            const result = onChange(modelFields);
-            values = result?.CompositeToys ?? values;
-          }
-          setCompositeToys(values);
-          setCurrentCompositeToysValue(undefined);
-          setCurrentCompositeToysDisplayValue(\\"\\");
-        }}
-        currentFieldValue={currentCompositeToysValue}
-        label={\\"Composite toys\\"}
-        items={CompositeToys}
-        hasError={errors.CompositeToys?.hasError}
-        getBadgeText={getDisplayValue.CompositeToys}
-        setFieldValue={(model) => {
-          setCurrentCompositeToysDisplayValue(
-            getDisplayValue.CompositeToys(model)
-          );
-          setCurrentCompositeToysValue(model);
-        }}
-        inputFieldRef={CompositeToysRef}
-        defaultFieldValue={\\"\\"}
-      >
-        <Autocomplete
-          label=\\"Composite toys\\"
-          isRequired={false}
-          isReadOnly={false}
-          value={currentCompositeToysDisplayValue}
-          options={compositeToyRecords
-            .filter(
-              (r) => !CompositeToysIdSet.has(getIDValue.CompositeToys?.(r))
-            )
-            .map((r) => ({
-              id: getIDValue.CompositeToys?.(r),
-              label: getDisplayValue.CompositeToys?.(r),
-            }))}
-          onSelect={({ id, label }) => {
-            setCurrentCompositeToysValue(
-              compositeToyRecords.find((r) =>
-                Object.entries(JSON.parse(id)).every(
-                  ([key, value]) => r[key] === value
-                )
-              )
-            );
-            setCurrentCompositeToysDisplayValue(label);
-          }}
-          onClear={() => {
-            setCurrentCompositeToysDisplayValue(\\"\\");
-          }}
-          onChange={(e) => {
-            let { value } = e.target;
-            if (errors.CompositeToys?.hasError) {
-              runValidationTasks(\\"CompositeToys\\", value);
-            }
-            setCurrentCompositeToysDisplayValue(value);
-            setCurrentCompositeToysValue(undefined);
-          }}
-          onBlur={() =>
-            runValidationTasks(\\"CompositeToys\\", currentCompositeToysValue)
-          }
-          errorMessage={errors.CompositeToys?.errorMessage}
-          hasError={errors.CompositeToys?.hasError}
-          ref={CompositeToysRef}
-          labelHidden={true}
-          {...getOverrideProps(overrides, \\"CompositeToys\\")}
-        ></Autocomplete>
-      </ArrayField>
-      <ArrayField
-        onChange={async (items) => {
-          let values = items;
-          if (onChange) {
-            const modelFields = {
-              name,
-              description,
-              CompositeBowl,
-              CompositeOwner,
-              CompositeToys,
-              CompositeVets: values,
-            };
-            const result = onChange(modelFields);
-            values = result?.CompositeVets ?? values;
-          }
-          setCompositeVets(values);
-          setCurrentCompositeVetsValue(undefined);
-          setCurrentCompositeVetsDisplayValue(\\"\\");
-        }}
-        currentFieldValue={currentCompositeVetsValue}
-        label={\\"Composite vets\\"}
-        items={CompositeVets}
-        hasError={errors.CompositeVets?.hasError}
-        getBadgeText={getDisplayValue.CompositeVets}
-        setFieldValue={(model) => {
-          setCurrentCompositeVetsDisplayValue(
-            getDisplayValue.CompositeVets(model)
-          );
-          setCurrentCompositeVetsValue(model);
-        }}
-        inputFieldRef={CompositeVetsRef}
-        defaultFieldValue={\\"\\"}
-      >
-        <Autocomplete
-          label=\\"Composite vets\\"
-          isRequired={false}
-          isReadOnly={false}
-          value={currentCompositeVetsDisplayValue}
-          options={compositeVetRecords
-            .filter(
-              (r) => !CompositeVetsIdSet.has(getIDValue.CompositeVets?.(r))
-            )
-            .map((r) => ({
-              id: getIDValue.CompositeVets?.(r),
-              label: getDisplayValue.CompositeVets?.(r),
-            }))}
-          onSelect={({ id, label }) => {
-            setCurrentCompositeVetsValue(
-              compositeVetRecords.find((r) =>
-                Object.entries(JSON.parse(id)).every(
-                  ([key, value]) => r[key] === value
-                )
-              )
-            );
-            setCurrentCompositeVetsDisplayValue(label);
-          }}
-          onClear={() => {
-            setCurrentCompositeVetsDisplayValue(\\"\\");
-          }}
-          onChange={(e) => {
-            let { value } = e.target;
-            if (errors.CompositeVets?.hasError) {
-              runValidationTasks(\\"CompositeVets\\", value);
-            }
-            setCurrentCompositeVetsDisplayValue(value);
-            setCurrentCompositeVetsValue(undefined);
-          }}
-          onBlur={() =>
-            runValidationTasks(\\"CompositeVets\\", currentCompositeVetsValue)
-          }
-          errorMessage={errors.CompositeVets?.errorMessage}
-          hasError={errors.CompositeVets?.hasError}
-          ref={CompositeVetsRef}
-          labelHidden={true}
-          {...getOverrideProps(overrides, \\"CompositeVets\\")}
-        ></Autocomplete>
-      </ArrayField>
       <Flex
         justifyContent=\\"space-between\\"
         {...getOverrideProps(overrides, \\"CTAFlex\\")}
@@ -4145,9 +2673,9 @@ export default function UpdateCompositeDogForm(props) {
 
 exports[`amplify form renderer tests datastore form tests custom form tests should render an update form for model with composite keys 2`] = `
 "import * as React from \\"react\\";
-import { AutocompleteProps, GridProps, TextFieldProps } from \\"@aws-amplify/ui-react\\";
+import { GridProps, TextFieldProps } from \\"@aws-amplify/ui-react\\";
 import { EscapeHatchProps } from \\"@aws-amplify/ui-react/internal\\";
-import { CompositeDog, CompositeBowl as CompositeBowl0, CompositeOwner as CompositeOwner0, CompositeToy, CompositeVet } from \\"../models\\";
+import { CompositeDog } from \\"../models\\";
 export declare type ValidationResponse = {
     hasError: boolean;
     errorMessage?: string;
@@ -4156,28 +2684,16 @@ export declare type ValidationFunction<T> = (value: T, validationResponse: Valid
 export declare type UpdateCompositeDogFormInputValues = {
     name?: string;
     description?: string;
-    CompositeBowl?: CompositeBowl0;
-    CompositeOwner?: CompositeOwner0;
-    CompositeToys?: CompositeToy[];
-    CompositeVets?: CompositeVet[];
 };
 export declare type UpdateCompositeDogFormValidationValues = {
     name?: ValidationFunction<string>;
     description?: ValidationFunction<string>;
-    CompositeBowl?: ValidationFunction<CompositeBowl0>;
-    CompositeOwner?: ValidationFunction<CompositeOwner0>;
-    CompositeToys?: ValidationFunction<CompositeToy>;
-    CompositeVets?: ValidationFunction<CompositeVet>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type UpdateCompositeDogFormOverridesProps = {
     UpdateCompositeDogFormGrid?: PrimitiveOverrideProps<GridProps>;
     name?: PrimitiveOverrideProps<TextFieldProps>;
     description?: PrimitiveOverrideProps<TextFieldProps>;
-    CompositeBowl?: PrimitiveOverrideProps<AutocompleteProps>;
-    CompositeOwner?: PrimitiveOverrideProps<AutocompleteProps>;
-    CompositeToys?: PrimitiveOverrideProps<AutocompleteProps>;
-    CompositeVets?: PrimitiveOverrideProps<AutocompleteProps>;
 } & EscapeHatchProps;
 export declare type UpdateCompositeDogFormProps = React.PropsWithChildren<{
     overrides?: UpdateCompositeDogFormOverridesProps | undefined | null;
@@ -6447,7 +4963,6 @@ export default function MyPostForm(props) {
     post_url: \\"\\",
     metadata: undefined,
     profile_url: \\"\\",
-    nonModelField: undefined,
   };
   const [caption, setCaption] = React.useState(initialValues.caption);
   const [username, setUsername] = React.useState(initialValues.username);
@@ -6458,11 +4973,6 @@ export default function MyPostForm(props) {
   const [profile_url, setProfile_url] = React.useState(
     initialValues.profile_url
   );
-  const [nonModelField, setNonModelField] = React.useState(
-    initialValues.nonModelField
-      ? JSON.stringify(initialValues.nonModelField)
-      : undefined
-  );
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     setCaption(initialValues.caption);
@@ -6470,7 +4980,6 @@ export default function MyPostForm(props) {
     setPost_url(initialValues.post_url);
     setMetadata(initialValues.metadata);
     setProfile_url(initialValues.profile_url);
-    setNonModelField(initialValues.nonModelField);
     setErrors({});
   };
   const validations = {
@@ -6479,7 +4988,6 @@ export default function MyPostForm(props) {
     post_url: [{ type: \\"URL\\" }],
     metadata: [{ type: \\"JSON\\" }],
     profile_url: [{ type: \\"URL\\" }],
-    nonModelField: [{ type: \\"JSON\\" }],
   };
   const runValidationTasks = async (
     fieldName,
@@ -6511,7 +5019,6 @@ export default function MyPostForm(props) {
           post_url: post_url || undefined,
           metadata,
           profile_url: profile_url || undefined,
-          nonModelField: nonModelField || undefined,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -6600,7 +5107,6 @@ export default function MyPostForm(props) {
               post_url,
               metadata,
               profile_url,
-              nonModelField,
             };
             const result = onChange(modelFields);
             value = result?.caption ?? value;
@@ -6629,7 +5135,6 @@ export default function MyPostForm(props) {
               post_url,
               metadata,
               profile_url,
-              nonModelField,
             };
             const result = onChange(modelFields);
             value = result?.username ?? value;
@@ -6658,7 +5163,6 @@ export default function MyPostForm(props) {
               post_url: value,
               metadata,
               profile_url,
-              nonModelField,
             };
             const result = onChange(modelFields);
             value = result?.post_url ?? value;
@@ -6686,7 +5190,6 @@ export default function MyPostForm(props) {
               post_url,
               metadata: value,
               profile_url,
-              nonModelField,
             };
             const result = onChange(modelFields);
             value = result?.metadata ?? value;
@@ -6715,7 +5218,6 @@ export default function MyPostForm(props) {
               post_url,
               metadata,
               profile_url: value,
-              nonModelField,
             };
             const result = onChange(modelFields);
             value = result?.profile_url ?? value;
@@ -6730,34 +5232,6 @@ export default function MyPostForm(props) {
         hasError={errors.profile_url?.hasError}
         {...getOverrideProps(overrides, \\"profile_url\\")}
       ></TextField>
-      <TextAreaField
-        label=\\"Non model field\\"
-        isRequired={false}
-        isReadOnly={false}
-        onChange={(e) => {
-          let { value } = e.target;
-          if (onChange) {
-            const modelFields = {
-              caption,
-              username,
-              post_url,
-              metadata,
-              profile_url,
-              nonModelField: value,
-            };
-            const result = onChange(modelFields);
-            value = result?.nonModelField ?? value;
-          }
-          if (errors.nonModelField?.hasError) {
-            runValidationTasks(\\"nonModelField\\", value);
-          }
-          setNonModelField(value);
-        }}
-        onBlur={() => runValidationTasks(\\"nonModelField\\", nonModelField)}
-        errorMessage={errors.nonModelField?.errorMessage}
-        hasError={errors.nonModelField?.hasError}
-        {...getOverrideProps(overrides, \\"nonModelField\\")}
-      ></TextAreaField>
     </Grid>
   );
 }
@@ -6779,7 +5253,6 @@ export declare type MyPostFormInputValues = {
     post_url?: string;
     metadata?: string;
     profile_url?: string;
-    nonModelField?: string;
 };
 export declare type MyPostFormValidationValues = {
     caption?: ValidationFunction<string>;
@@ -6787,7 +5260,6 @@ export declare type MyPostFormValidationValues = {
     post_url?: ValidationFunction<string>;
     metadata?: ValidationFunction<string>;
     profile_url?: ValidationFunction<string>;
-    nonModelField?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type MyPostFormOverridesProps = {
@@ -6797,7 +5269,6 @@ export declare type MyPostFormOverridesProps = {
     post_url?: PrimitiveOverrideProps<TextFieldProps>;
     metadata?: PrimitiveOverrideProps<TextAreaFieldProps>;
     profile_url?: PrimitiveOverrideProps<TextFieldProps>;
-    nonModelField?: PrimitiveOverrideProps<TextAreaFieldProps>;
 } & EscapeHatchProps;
 export declare type MyPostFormProps = React.PropsWithChildren<{
     overrides?: MyPostFormOverridesProps | undefined | null;
@@ -6999,29 +5470,29 @@ export default function TagCreateForm(props) {
   } = props;
   const initialValues = {
     label: \\"\\",
-    Posts: [],
     statuses: [],
+    Posts: [],
   };
   const [label, setLabel] = React.useState(initialValues.label);
-  const [Posts, setPosts] = React.useState(initialValues.Posts);
   const [statuses, setStatuses] = React.useState(initialValues.statuses);
+  const [Posts, setPosts] = React.useState(initialValues.Posts);
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     setLabel(initialValues.label);
+    setStatuses(initialValues.statuses);
+    setCurrentStatusesValue(undefined);
     setPosts(initialValues.Posts);
     setCurrentPostsValue(undefined);
     setCurrentPostsDisplayValue(\\"\\");
-    setStatuses(initialValues.statuses);
-    setCurrentStatusesValue(undefined);
     setErrors({});
   };
+  const [currentStatusesValue, setCurrentStatusesValue] =
+    React.useState(undefined);
+  const statusesRef = React.createRef();
   const [currentPostsDisplayValue, setCurrentPostsDisplayValue] =
     React.useState(\\"\\");
   const [currentPostsValue, setCurrentPostsValue] = React.useState(undefined);
   const PostsRef = React.createRef();
-  const [currentStatusesValue, setCurrentStatusesValue] =
-    React.useState(undefined);
-  const statusesRef = React.createRef();
   const getIDValue = {
     Posts: (r) => JSON.stringify({ id: r?.id }),
   };
@@ -7035,7 +5506,6 @@ export default function TagCreateForm(props) {
     model: Post,
   }).items;
   const getDisplayValue = {
-    Posts: (r) => r?.title,
     statuses: (r) => {
       const enumDisplayValueMap = {
         PENDING: \\"Pending\\",
@@ -7044,11 +5514,12 @@ export default function TagCreateForm(props) {
       };
       return enumDisplayValueMap[r];
     },
+    Posts: (r) => r?.title,
   };
   const validations = {
     label: [],
-    Posts: [],
     statuses: [],
+    Posts: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -7076,8 +5547,8 @@ export default function TagCreateForm(props) {
         event.preventDefault();
         let modelFields = {
           label,
-          Posts,
           statuses,
+          Posts,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -7154,8 +5625,8 @@ export default function TagCreateForm(props) {
           if (onChange) {
             const modelFields = {
               label: value,
-              Posts,
               statuses,
+              Posts,
             };
             const result = onChange(modelFields);
             value = result?.label ?? value;
@@ -7176,8 +5647,68 @@ export default function TagCreateForm(props) {
           if (onChange) {
             const modelFields = {
               label,
-              Posts: values,
+              statuses: values,
+              Posts,
+            };
+            const result = onChange(modelFields);
+            values = result?.statuses ?? values;
+          }
+          setStatuses(values);
+          setCurrentStatusesValue(undefined);
+        }}
+        currentFieldValue={currentStatusesValue}
+        label={\\"Statuses\\"}
+        items={statuses}
+        hasError={errors.statuses?.hasError}
+        getBadgeText={getDisplayValue.statuses}
+        setFieldValue={setCurrentStatusesValue}
+        inputFieldRef={statusesRef}
+        defaultFieldValue={undefined}
+      >
+        <SelectField
+          label=\\"Statuses\\"
+          placeholder=\\"Please select an option\\"
+          isDisabled={false}
+          value={currentStatusesValue}
+          onChange={(e) => {
+            let { value } = e.target;
+            if (errors.statuses?.hasError) {
+              runValidationTasks(\\"statuses\\", value);
+            }
+            setCurrentStatusesValue(value);
+          }}
+          onBlur={() => runValidationTasks(\\"statuses\\", currentStatusesValue)}
+          errorMessage={errors.statuses?.errorMessage}
+          hasError={errors.statuses?.hasError}
+          ref={statusesRef}
+          labelHidden={true}
+          {...getOverrideProps(overrides, \\"statuses\\")}
+        >
+          <option
+            children=\\"Pending\\"
+            value=\\"PENDING\\"
+            {...getOverrideProps(overrides, \\"statusesoption0\\")}
+          ></option>
+          <option
+            children=\\"Posted\\"
+            value=\\"POSTED\\"
+            {...getOverrideProps(overrides, \\"statusesoption1\\")}
+          ></option>
+          <option
+            children=\\"In review\\"
+            value=\\"IN_REVIEW\\"
+            {...getOverrideProps(overrides, \\"statusesoption2\\")}
+          ></option>
+        </SelectField>
+      </ArrayField>
+      <ArrayField
+        onChange={async (items) => {
+          let values = items;
+          if (onChange) {
+            const modelFields = {
+              label,
               statuses,
+              Posts: values,
             };
             const result = onChange(modelFields);
             values = result?.Posts ?? values;
@@ -7238,66 +5769,6 @@ export default function TagCreateForm(props) {
           {...getOverrideProps(overrides, \\"Posts\\")}
         ></Autocomplete>
       </ArrayField>
-      <ArrayField
-        onChange={async (items) => {
-          let values = items;
-          if (onChange) {
-            const modelFields = {
-              label,
-              Posts,
-              statuses: values,
-            };
-            const result = onChange(modelFields);
-            values = result?.statuses ?? values;
-          }
-          setStatuses(values);
-          setCurrentStatusesValue(undefined);
-        }}
-        currentFieldValue={currentStatusesValue}
-        label={\\"Statuses\\"}
-        items={statuses}
-        hasError={errors.statuses?.hasError}
-        getBadgeText={getDisplayValue.statuses}
-        setFieldValue={setCurrentStatusesValue}
-        inputFieldRef={statusesRef}
-        defaultFieldValue={undefined}
-      >
-        <SelectField
-          label=\\"Statuses\\"
-          placeholder=\\"Please select an option\\"
-          isDisabled={false}
-          value={currentStatusesValue}
-          onChange={(e) => {
-            let { value } = e.target;
-            if (errors.statuses?.hasError) {
-              runValidationTasks(\\"statuses\\", value);
-            }
-            setCurrentStatusesValue(value);
-          }}
-          onBlur={() => runValidationTasks(\\"statuses\\", currentStatusesValue)}
-          errorMessage={errors.statuses?.errorMessage}
-          hasError={errors.statuses?.hasError}
-          ref={statusesRef}
-          labelHidden={true}
-          {...getOverrideProps(overrides, \\"statuses\\")}
-        >
-          <option
-            children=\\"Pending\\"
-            value=\\"PENDING\\"
-            {...getOverrideProps(overrides, \\"statusesoption0\\")}
-          ></option>
-          <option
-            children=\\"Posted\\"
-            value=\\"POSTED\\"
-            {...getOverrideProps(overrides, \\"statusesoption1\\")}
-          ></option>
-          <option
-            children=\\"In review\\"
-            value=\\"IN_REVIEW\\"
-            {...getOverrideProps(overrides, \\"statusesoption2\\")}
-          ></option>
-        </SelectField>
-      </ArrayField>
       <Flex
         justifyContent=\\"space-between\\"
         {...getOverrideProps(overrides, \\"CTAFlex\\")}
@@ -7350,20 +5821,20 @@ export declare type ValidationResponse = {
 export declare type ValidationFunction<T> = (value: T, validationResponse: ValidationResponse) => ValidationResponse | Promise<ValidationResponse>;
 export declare type TagCreateFormInputValues = {
     label?: string;
-    Posts?: Post[];
     statuses?: string[];
+    Posts?: Post[];
 };
 export declare type TagCreateFormValidationValues = {
     label?: ValidationFunction<string>;
-    Posts?: ValidationFunction<Post>;
     statuses?: ValidationFunction<string>;
+    Posts?: ValidationFunction<Post>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type TagCreateFormOverridesProps = {
     TagCreateFormGrid?: PrimitiveOverrideProps<GridProps>;
     label?: PrimitiveOverrideProps<TextFieldProps>;
-    Posts?: PrimitiveOverrideProps<AutocompleteProps>;
     statuses?: PrimitiveOverrideProps<SelectFieldProps>;
+    Posts?: PrimitiveOverrideProps<AutocompleteProps>;
 } & EscapeHatchProps;
 export declare type TagCreateFormProps = React.PropsWithChildren<{
     overrides?: TagCreateFormOverridesProps | undefined | null;
@@ -8989,29 +7460,29 @@ export default function TagCreateForm(props) {
   } = props;
   const initialValues = {
     label: \\"\\",
-    Posts: [],
     statuses: [],
+    Posts: [],
   };
   const [label, setLabel] = React.useState(initialValues.label);
-  const [Posts, setPosts] = React.useState(initialValues.Posts);
   const [statuses, setStatuses] = React.useState(initialValues.statuses);
+  const [Posts, setPosts] = React.useState(initialValues.Posts);
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     setLabel(initialValues.label);
+    setStatuses(initialValues.statuses);
+    setCurrentStatusesValue(undefined);
     setPosts(initialValues.Posts);
     setCurrentPostsValue(undefined);
     setCurrentPostsDisplayValue(\\"\\");
-    setStatuses(initialValues.statuses);
-    setCurrentStatusesValue(undefined);
     setErrors({});
   };
+  const [currentStatusesValue, setCurrentStatusesValue] =
+    React.useState(undefined);
+  const statusesRef = React.createRef();
   const [currentPostsDisplayValue, setCurrentPostsDisplayValue] =
     React.useState(\\"\\");
   const [currentPostsValue, setCurrentPostsValue] = React.useState(undefined);
   const PostsRef = React.createRef();
-  const [currentStatusesValue, setCurrentStatusesValue] =
-    React.useState(undefined);
-  const statusesRef = React.createRef();
   const getIDValue = {
     Posts: (r) => JSON.stringify({ id: r?.id }),
   };
@@ -9025,7 +7496,6 @@ export default function TagCreateForm(props) {
     model: Post,
   }).items;
   const getDisplayValue = {
-    Posts: (r) => r?.title,
     statuses: (r) => {
       const enumDisplayValueMap = {
         PENDING: \\"Pending\\",
@@ -9034,11 +7504,12 @@ export default function TagCreateForm(props) {
       };
       return enumDisplayValueMap[r];
     },
+    Posts: (r) => r?.title,
   };
   const validations = {
     label: [],
-    Posts: [],
     statuses: [],
+    Posts: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -9066,8 +7537,8 @@ export default function TagCreateForm(props) {
         event.preventDefault();
         let modelFields = {
           label,
-          Posts,
           statuses,
+          Posts,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -9144,8 +7615,8 @@ export default function TagCreateForm(props) {
           if (onChange) {
             const modelFields = {
               label: value,
-              Posts,
               statuses,
+              Posts,
             };
             const result = onChange(modelFields);
             value = result?.label ?? value;
@@ -9166,8 +7637,68 @@ export default function TagCreateForm(props) {
           if (onChange) {
             const modelFields = {
               label,
-              Posts: values,
+              statuses: values,
+              Posts,
+            };
+            const result = onChange(modelFields);
+            values = result?.statuses ?? values;
+          }
+          setStatuses(values);
+          setCurrentStatusesValue(undefined);
+        }}
+        currentFieldValue={currentStatusesValue}
+        label={\\"Statuses\\"}
+        items={statuses}
+        hasError={errors.statuses?.hasError}
+        getBadgeText={getDisplayValue.statuses}
+        setFieldValue={setCurrentStatusesValue}
+        inputFieldRef={statusesRef}
+        defaultFieldValue={undefined}
+      >
+        <SelectField
+          label=\\"Statuses\\"
+          placeholder=\\"Please select an option\\"
+          isDisabled={false}
+          value={currentStatusesValue}
+          onChange={(e) => {
+            let { value } = e.target;
+            if (errors.statuses?.hasError) {
+              runValidationTasks(\\"statuses\\", value);
+            }
+            setCurrentStatusesValue(value);
+          }}
+          onBlur={() => runValidationTasks(\\"statuses\\", currentStatusesValue)}
+          errorMessage={errors.statuses?.errorMessage}
+          hasError={errors.statuses?.hasError}
+          ref={statusesRef}
+          labelHidden={true}
+          {...getOverrideProps(overrides, \\"statuses\\")}
+        >
+          <option
+            children=\\"Pending\\"
+            value=\\"PENDING\\"
+            {...getOverrideProps(overrides, \\"statusesoption0\\")}
+          ></option>
+          <option
+            children=\\"Posted\\"
+            value=\\"POSTED\\"
+            {...getOverrideProps(overrides, \\"statusesoption1\\")}
+          ></option>
+          <option
+            children=\\"In review\\"
+            value=\\"IN_REVIEW\\"
+            {...getOverrideProps(overrides, \\"statusesoption2\\")}
+          ></option>
+        </SelectField>
+      </ArrayField>
+      <ArrayField
+        onChange={async (items) => {
+          let values = items;
+          if (onChange) {
+            const modelFields = {
+              label,
               statuses,
+              Posts: values,
             };
             const result = onChange(modelFields);
             values = result?.Posts ?? values;
@@ -9228,66 +7759,6 @@ export default function TagCreateForm(props) {
           {...getOverrideProps(overrides, \\"Posts\\")}
         ></Autocomplete>
       </ArrayField>
-      <ArrayField
-        onChange={async (items) => {
-          let values = items;
-          if (onChange) {
-            const modelFields = {
-              label,
-              Posts,
-              statuses: values,
-            };
-            const result = onChange(modelFields);
-            values = result?.statuses ?? values;
-          }
-          setStatuses(values);
-          setCurrentStatusesValue(undefined);
-        }}
-        currentFieldValue={currentStatusesValue}
-        label={\\"Statuses\\"}
-        items={statuses}
-        hasError={errors.statuses?.hasError}
-        getBadgeText={getDisplayValue.statuses}
-        setFieldValue={setCurrentStatusesValue}
-        inputFieldRef={statusesRef}
-        defaultFieldValue={undefined}
-      >
-        <SelectField
-          label=\\"Statuses\\"
-          placeholder=\\"Please select an option\\"
-          isDisabled={false}
-          value={currentStatusesValue}
-          onChange={(e) => {
-            let { value } = e.target;
-            if (errors.statuses?.hasError) {
-              runValidationTasks(\\"statuses\\", value);
-            }
-            setCurrentStatusesValue(value);
-          }}
-          onBlur={() => runValidationTasks(\\"statuses\\", currentStatusesValue)}
-          errorMessage={errors.statuses?.errorMessage}
-          hasError={errors.statuses?.hasError}
-          ref={statusesRef}
-          labelHidden={true}
-          {...getOverrideProps(overrides, \\"statuses\\")}
-        >
-          <option
-            children=\\"Pending\\"
-            value=\\"PENDING\\"
-            {...getOverrideProps(overrides, \\"statusesoption0\\")}
-          ></option>
-          <option
-            children=\\"Posted\\"
-            value=\\"POSTED\\"
-            {...getOverrideProps(overrides, \\"statusesoption1\\")}
-          ></option>
-          <option
-            children=\\"In review\\"
-            value=\\"IN_REVIEW\\"
-            {...getOverrideProps(overrides, \\"statusesoption2\\")}
-          ></option>
-        </SelectField>
-      </ArrayField>
       <Flex
         justifyContent=\\"space-between\\"
         {...getOverrideProps(overrides, \\"CTAFlex\\")}
@@ -9340,20 +7811,20 @@ export declare type ValidationResponse = {
 export declare type ValidationFunction<T> = (value: T, validationResponse: ValidationResponse) => ValidationResponse | Promise<ValidationResponse>;
 export declare type TagCreateFormInputValues = {
     label?: string;
-    Posts?: Post[];
     statuses?: string[];
+    Posts?: Post[];
 };
 export declare type TagCreateFormValidationValues = {
     label?: ValidationFunction<string>;
-    Posts?: ValidationFunction<Post>;
     statuses?: ValidationFunction<string>;
+    Posts?: ValidationFunction<Post>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type TagCreateFormOverridesProps = {
     TagCreateFormGrid?: PrimitiveOverrideProps<GridProps>;
     label?: PrimitiveOverrideProps<TextFieldProps>;
-    Posts?: PrimitiveOverrideProps<AutocompleteProps>;
     statuses?: PrimitiveOverrideProps<SelectFieldProps>;
+    Posts?: PrimitiveOverrideProps<AutocompleteProps>;
 } & EscapeHatchProps;
 export declare type TagCreateFormProps = React.PropsWithChildren<{
     overrides?: TagCreateFormOverridesProps | undefined | null;
@@ -9980,7 +8451,6 @@ export default function MyPostForm(props) {
     profile_url: \\"\\",
     post_url: \\"\\",
     metadata: undefined,
-    nonModelField: undefined,
   };
   const [TextAreaFieldbbd63464, setTextAreaFieldbbd63464] = React.useState(
     initialValues.TextAreaFieldbbd63464
@@ -9993,11 +8463,6 @@ export default function MyPostForm(props) {
   const [post_url, setPost_url] = React.useState(initialValues.post_url);
   const [metadata, setMetadata] = React.useState(
     initialValues.metadata ? JSON.stringify(initialValues.metadata) : undefined
-  );
-  const [nonModelField, setNonModelField] = React.useState(
-    initialValues.nonModelField
-      ? JSON.stringify(initialValues.nonModelField)
-      : undefined
   );
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
@@ -10013,11 +8478,6 @@ export default function MyPostForm(props) {
       typeof cleanValues.metadata === \\"string\\"
         ? cleanValues.metadata
         : JSON.stringify(cleanValues.metadata)
-    );
-    setNonModelField(
-      typeof cleanValues.nonModelField === \\"string\\"
-        ? cleanValues.nonModelField
-        : JSON.stringify(cleanValues.nonModelField)
     );
     setErrors({});
   };
@@ -10037,7 +8497,6 @@ export default function MyPostForm(props) {
     profile_url: [{ type: \\"URL\\" }],
     post_url: [{ type: \\"URL\\" }],
     metadata: [{ type: \\"JSON\\" }],
-    nonModelField: [{ type: \\"JSON\\" }],
   };
   const runValidationTasks = async (
     fieldName,
@@ -10070,7 +8529,6 @@ export default function MyPostForm(props) {
           profile_url: profile_url || undefined,
           post_url: post_url || undefined,
           metadata,
-          nonModelField: nonModelField || undefined,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -10163,7 +8621,6 @@ export default function MyPostForm(props) {
               profile_url,
               post_url,
               metadata,
-              nonModelField,
             };
             const result = onChange(modelFields);
             value = result?.TextAreaFieldbbd63464 ?? value;
@@ -10195,7 +8652,6 @@ export default function MyPostForm(props) {
               profile_url,
               post_url,
               metadata,
-              nonModelField,
             };
             const result = onChange(modelFields);
             value = result?.caption ?? value;
@@ -10225,7 +8681,6 @@ export default function MyPostForm(props) {
               profile_url,
               post_url,
               metadata,
-              nonModelField,
             };
             const result = onChange(modelFields);
             value = result?.username ?? value;
@@ -10255,7 +8710,6 @@ export default function MyPostForm(props) {
               profile_url: value,
               post_url,
               metadata,
-              nonModelField,
             };
             const result = onChange(modelFields);
             value = result?.profile_url ?? value;
@@ -10285,7 +8739,6 @@ export default function MyPostForm(props) {
               profile_url,
               post_url: value,
               metadata,
-              nonModelField,
             };
             const result = onChange(modelFields);
             value = result?.post_url ?? value;
@@ -10315,7 +8768,6 @@ export default function MyPostForm(props) {
               profile_url,
               post_url,
               metadata: value,
-              nonModelField,
             };
             const result = onChange(modelFields);
             value = result?.metadata ?? value;
@@ -10329,36 +8781,6 @@ export default function MyPostForm(props) {
         errorMessage={errors.metadata?.errorMessage}
         hasError={errors.metadata?.hasError}
         {...getOverrideProps(overrides, \\"metadata\\")}
-      ></TextAreaField>
-      <TextAreaField
-        label=\\"Non model field\\"
-        isRequired={false}
-        isReadOnly={false}
-        defaultValue={nonModelField}
-        onChange={(e) => {
-          let { value } = e.target;
-          if (onChange) {
-            const modelFields = {
-              TextAreaFieldbbd63464,
-              caption,
-              username,
-              profile_url,
-              post_url,
-              metadata,
-              nonModelField: value,
-            };
-            const result = onChange(modelFields);
-            value = result?.nonModelField ?? value;
-          }
-          if (errors.nonModelField?.hasError) {
-            runValidationTasks(\\"nonModelField\\", value);
-          }
-          setNonModelField(value);
-        }}
-        onBlur={() => runValidationTasks(\\"nonModelField\\", nonModelField)}
-        errorMessage={errors.nonModelField?.errorMessage}
-        hasError={errors.nonModelField?.hasError}
-        {...getOverrideProps(overrides, \\"nonModelField\\")}
       ></TextAreaField>
       <Flex
         justifyContent=\\"space-between\\"
@@ -10421,7 +8843,6 @@ export declare type MyPostFormInputValues = {
     profile_url?: string;
     post_url?: string;
     metadata?: string;
-    nonModelField?: string;
 };
 export declare type MyPostFormValidationValues = {
     TextAreaFieldbbd63464?: ValidationFunction<string>;
@@ -10430,7 +8851,6 @@ export declare type MyPostFormValidationValues = {
     profile_url?: ValidationFunction<string>;
     post_url?: ValidationFunction<string>;
     metadata?: ValidationFunction<string>;
-    nonModelField?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type MyPostFormOverridesProps = {
@@ -10441,7 +8861,6 @@ export declare type MyPostFormOverridesProps = {
     profile_url?: PrimitiveOverrideProps<TextFieldProps>;
     post_url?: PrimitiveOverrideProps<TextFieldProps>;
     metadata?: PrimitiveOverrideProps<TextAreaFieldProps>;
-    nonModelField?: PrimitiveOverrideProps<TextAreaFieldProps>;
 } & EscapeHatchProps;
 export declare type MyPostFormProps = React.PropsWithChildren<{
     overrides?: MyPostFormOverridesProps | undefined | null;
@@ -11664,23 +10083,23 @@ export default function TagUpdateForm(props) {
   } = props;
   const initialValues = {
     label: \\"\\",
-    Posts: [],
     statuses: [],
+    Posts: [],
   };
   const [label, setLabel] = React.useState(initialValues.label);
-  const [Posts, setPosts] = React.useState(initialValues.Posts);
   const [statuses, setStatuses] = React.useState(initialValues.statuses);
+  const [Posts, setPosts] = React.useState(initialValues.Posts);
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     const cleanValues = tagRecord
       ? { ...initialValues, ...tagRecord, Posts: linkedPosts }
       : initialValues;
     setLabel(cleanValues.label);
+    setStatuses(cleanValues.statuses ?? []);
+    setCurrentStatusesValue(undefined);
     setPosts(cleanValues.Posts ?? []);
     setCurrentPostsValue(undefined);
     setCurrentPostsDisplayValue(\\"\\");
-    setStatuses(cleanValues.statuses ?? []);
-    setCurrentStatusesValue(undefined);
     setErrors({});
   };
   const [tagRecord, setTagRecord] = React.useState(tag);
@@ -11703,13 +10122,13 @@ export default function TagUpdateForm(props) {
     queryData();
   }, [idProp, tag]);
   React.useEffect(resetStateValues, [tagRecord, linkedPosts]);
+  const [currentStatusesValue, setCurrentStatusesValue] =
+    React.useState(undefined);
+  const statusesRef = React.createRef();
   const [currentPostsDisplayValue, setCurrentPostsDisplayValue] =
     React.useState(\\"\\");
   const [currentPostsValue, setCurrentPostsValue] = React.useState(undefined);
   const PostsRef = React.createRef();
-  const [currentStatusesValue, setCurrentStatusesValue] =
-    React.useState(undefined);
-  const statusesRef = React.createRef();
   const getIDValue = {
     Posts: (r) => JSON.stringify({ id: r?.id }),
   };
@@ -11723,7 +10142,6 @@ export default function TagUpdateForm(props) {
     model: Post,
   }).items;
   const getDisplayValue = {
-    Posts: (r) => r?.title,
     statuses: (r) => {
       const enumDisplayValueMap = {
         PENDING: \\"Pending\\",
@@ -11732,11 +10150,12 @@ export default function TagUpdateForm(props) {
       };
       return enumDisplayValueMap[r];
     },
+    Posts: (r) => r?.title,
   };
   const validations = {
     label: [],
-    Posts: [],
     statuses: [],
+    Posts: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -11764,8 +10183,8 @@ export default function TagUpdateForm(props) {
         event.preventDefault();
         let modelFields = {
           label,
-          Posts,
           statuses,
+          Posts,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -11892,8 +10311,8 @@ export default function TagUpdateForm(props) {
           if (onChange) {
             const modelFields = {
               label: value,
-              Posts,
               statuses,
+              Posts,
             };
             const result = onChange(modelFields);
             value = result?.label ?? value;
@@ -11914,8 +10333,68 @@ export default function TagUpdateForm(props) {
           if (onChange) {
             const modelFields = {
               label,
-              Posts: values,
+              statuses: values,
+              Posts,
+            };
+            const result = onChange(modelFields);
+            values = result?.statuses ?? values;
+          }
+          setStatuses(values);
+          setCurrentStatusesValue(undefined);
+        }}
+        currentFieldValue={currentStatusesValue}
+        label={\\"Statuses\\"}
+        items={statuses}
+        hasError={errors.statuses?.hasError}
+        getBadgeText={getDisplayValue.statuses}
+        setFieldValue={setCurrentStatusesValue}
+        inputFieldRef={statusesRef}
+        defaultFieldValue={undefined}
+      >
+        <SelectField
+          label=\\"Statuses\\"
+          placeholder=\\"Please select an option\\"
+          isDisabled={false}
+          value={currentStatusesValue}
+          onChange={(e) => {
+            let { value } = e.target;
+            if (errors.statuses?.hasError) {
+              runValidationTasks(\\"statuses\\", value);
+            }
+            setCurrentStatusesValue(value);
+          }}
+          onBlur={() => runValidationTasks(\\"statuses\\", currentStatusesValue)}
+          errorMessage={errors.statuses?.errorMessage}
+          hasError={errors.statuses?.hasError}
+          ref={statusesRef}
+          labelHidden={true}
+          {...getOverrideProps(overrides, \\"statuses\\")}
+        >
+          <option
+            children=\\"Pending\\"
+            value=\\"PENDING\\"
+            {...getOverrideProps(overrides, \\"statusesoption0\\")}
+          ></option>
+          <option
+            children=\\"Posted\\"
+            value=\\"POSTED\\"
+            {...getOverrideProps(overrides, \\"statusesoption1\\")}
+          ></option>
+          <option
+            children=\\"In review\\"
+            value=\\"IN_REVIEW\\"
+            {...getOverrideProps(overrides, \\"statusesoption2\\")}
+          ></option>
+        </SelectField>
+      </ArrayField>
+      <ArrayField
+        onChange={async (items) => {
+          let values = items;
+          if (onChange) {
+            const modelFields = {
+              label,
               statuses,
+              Posts: values,
             };
             const result = onChange(modelFields);
             values = result?.Posts ?? values;
@@ -11976,66 +10455,6 @@ export default function TagUpdateForm(props) {
           {...getOverrideProps(overrides, \\"Posts\\")}
         ></Autocomplete>
       </ArrayField>
-      <ArrayField
-        onChange={async (items) => {
-          let values = items;
-          if (onChange) {
-            const modelFields = {
-              label,
-              Posts,
-              statuses: values,
-            };
-            const result = onChange(modelFields);
-            values = result?.statuses ?? values;
-          }
-          setStatuses(values);
-          setCurrentStatusesValue(undefined);
-        }}
-        currentFieldValue={currentStatusesValue}
-        label={\\"Statuses\\"}
-        items={statuses}
-        hasError={errors.statuses?.hasError}
-        getBadgeText={getDisplayValue.statuses}
-        setFieldValue={setCurrentStatusesValue}
-        inputFieldRef={statusesRef}
-        defaultFieldValue={undefined}
-      >
-        <SelectField
-          label=\\"Statuses\\"
-          placeholder=\\"Please select an option\\"
-          isDisabled={false}
-          value={currentStatusesValue}
-          onChange={(e) => {
-            let { value } = e.target;
-            if (errors.statuses?.hasError) {
-              runValidationTasks(\\"statuses\\", value);
-            }
-            setCurrentStatusesValue(value);
-          }}
-          onBlur={() => runValidationTasks(\\"statuses\\", currentStatusesValue)}
-          errorMessage={errors.statuses?.errorMessage}
-          hasError={errors.statuses?.hasError}
-          ref={statusesRef}
-          labelHidden={true}
-          {...getOverrideProps(overrides, \\"statuses\\")}
-        >
-          <option
-            children=\\"Pending\\"
-            value=\\"PENDING\\"
-            {...getOverrideProps(overrides, \\"statusesoption0\\")}
-          ></option>
-          <option
-            children=\\"Posted\\"
-            value=\\"POSTED\\"
-            {...getOverrideProps(overrides, \\"statusesoption1\\")}
-          ></option>
-          <option
-            children=\\"In review\\"
-            value=\\"IN_REVIEW\\"
-            {...getOverrideProps(overrides, \\"statusesoption2\\")}
-          ></option>
-        </SelectField>
-      </ArrayField>
       <Flex
         justifyContent=\\"space-between\\"
         {...getOverrideProps(overrides, \\"CTAFlex\\")}
@@ -12091,20 +10510,20 @@ export declare type ValidationResponse = {
 export declare type ValidationFunction<T> = (value: T, validationResponse: ValidationResponse) => ValidationResponse | Promise<ValidationResponse>;
 export declare type TagUpdateFormInputValues = {
     label?: string;
-    Posts?: Post[];
     statuses?: string[];
+    Posts?: Post[];
 };
 export declare type TagUpdateFormValidationValues = {
     label?: ValidationFunction<string>;
-    Posts?: ValidationFunction<Post>;
     statuses?: ValidationFunction<string>;
+    Posts?: ValidationFunction<Post>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type TagUpdateFormOverridesProps = {
     TagUpdateFormGrid?: PrimitiveOverrideProps<GridProps>;
     label?: PrimitiveOverrideProps<TextFieldProps>;
-    Posts?: PrimitiveOverrideProps<AutocompleteProps>;
     statuses?: PrimitiveOverrideProps<SelectFieldProps>;
+    Posts?: PrimitiveOverrideProps<AutocompleteProps>;
 } & EscapeHatchProps;
 export declare type TagUpdateFormProps = React.PropsWithChildren<{
     overrides?: TagUpdateFormOverridesProps | undefined | null;
@@ -15686,7 +14105,6 @@ export default function PostCreateFormRow(props) {
     profile_url: \\"\\",
     status: undefined,
     metadata: undefined,
-    nonModelField: undefined,
   };
   const [username, setUsername] = React.useState(initialValues.username);
   const [caption, setCaption] = React.useState(initialValues.caption);
@@ -15698,11 +14116,6 @@ export default function PostCreateFormRow(props) {
   const [metadata, setMetadata] = React.useState(
     initialValues.metadata ? JSON.stringify(initialValues.metadata) : undefined
   );
-  const [nonModelField, setNonModelField] = React.useState(
-    initialValues.nonModelField
-      ? JSON.stringify(initialValues.nonModelField)
-      : undefined
-  );
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     setUsername(initialValues.username);
@@ -15711,7 +14124,6 @@ export default function PostCreateFormRow(props) {
     setProfile_url(initialValues.profile_url);
     setStatus(initialValues.status);
     setMetadata(initialValues.metadata);
-    setNonModelField(initialValues.nonModelField);
     setErrors({});
   };
   const validations = {
@@ -15727,7 +14139,6 @@ export default function PostCreateFormRow(props) {
     profile_url: [{ type: \\"URL\\" }],
     status: [],
     metadata: [{ type: \\"JSON\\" }],
-    nonModelField: [{ type: \\"JSON\\" }],
   };
   const runValidationTasks = async (
     fieldName,
@@ -15760,7 +14171,6 @@ export default function PostCreateFormRow(props) {
           profile_url: profile_url || undefined,
           status,
           metadata,
-          nonModelField: nonModelField || undefined,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -15823,7 +14233,6 @@ export default function PostCreateFormRow(props) {
                 profile_url,
                 status,
                 metadata,
-                nonModelField,
               };
               const result = onChange(modelFields);
               value = result?.username ?? value;
@@ -15854,7 +14263,6 @@ export default function PostCreateFormRow(props) {
                 profile_url,
                 status,
                 metadata,
-                nonModelField,
               };
               const result = onChange(modelFields);
               value = result?.caption ?? value;
@@ -15886,7 +14294,6 @@ export default function PostCreateFormRow(props) {
               profile_url,
               status,
               metadata,
-              nonModelField,
             };
             const result = onChange(modelFields);
             value = result?.post_url ?? value;
@@ -15917,7 +14324,6 @@ export default function PostCreateFormRow(props) {
               profile_url: value,
               status,
               metadata,
-              nonModelField,
             };
             const result = onChange(modelFields);
             value = result?.profile_url ?? value;
@@ -15946,7 +14352,6 @@ export default function PostCreateFormRow(props) {
               profile_url,
               status: value,
               metadata,
-              nonModelField,
             };
             const result = onChange(modelFields);
             value = result?.status ?? value;
@@ -15975,7 +14380,6 @@ export default function PostCreateFormRow(props) {
               profile_url,
               status,
               metadata: value,
-              nonModelField,
             };
             const result = onChange(modelFields);
             value = result?.metadata ?? value;
@@ -15989,35 +14393,6 @@ export default function PostCreateFormRow(props) {
         errorMessage={errors.metadata?.errorMessage}
         hasError={errors.metadata?.hasError}
         {...getOverrideProps(overrides, \\"metadata\\")}
-      ></TextAreaField>
-      <TextAreaField
-        label=\\"Non model field\\"
-        isRequired={false}
-        isReadOnly={false}
-        onChange={(e) => {
-          let { value } = e.target;
-          if (onChange) {
-            const modelFields = {
-              username,
-              caption,
-              post_url,
-              profile_url,
-              status,
-              metadata,
-              nonModelField: value,
-            };
-            const result = onChange(modelFields);
-            value = result?.nonModelField ?? value;
-          }
-          if (errors.nonModelField?.hasError) {
-            runValidationTasks(\\"nonModelField\\", value);
-          }
-          setNonModelField(value);
-        }}
-        onBlur={() => runValidationTasks(\\"nonModelField\\", nonModelField)}
-        errorMessage={errors.nonModelField?.errorMessage}
-        hasError={errors.nonModelField?.hasError}
-        {...getOverrideProps(overrides, \\"nonModelField\\")}
       ></TextAreaField>
       <Flex
         justifyContent=\\"space-between\\"
@@ -16075,7 +14450,6 @@ export declare type PostCreateFormRowInputValues = {
     profile_url?: string;
     status?: string;
     metadata?: string;
-    nonModelField?: string;
 };
 export declare type PostCreateFormRowValidationValues = {
     username?: ValidationFunction<string>;
@@ -16084,7 +14458,6 @@ export declare type PostCreateFormRowValidationValues = {
     profile_url?: ValidationFunction<string>;
     status?: ValidationFunction<string>;
     metadata?: ValidationFunction<string>;
-    nonModelField?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type PostCreateFormRowOverridesProps = {
@@ -16096,7 +14469,6 @@ export declare type PostCreateFormRowOverridesProps = {
     profile_url?: PrimitiveOverrideProps<TextFieldProps>;
     status?: PrimitiveOverrideProps<SelectFieldProps>;
     metadata?: PrimitiveOverrideProps<TextAreaFieldProps>;
-    nonModelField?: PrimitiveOverrideProps<TextAreaFieldProps>;
 } & EscapeHatchProps;
 export declare type PostCreateFormRowProps = React.PropsWithChildren<{
     overrides?: PostCreateFormRowOverridesProps | undefined | null;

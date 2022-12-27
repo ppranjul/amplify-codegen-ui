@@ -95,7 +95,7 @@ describe('mapFormMetaData', () => {
       cta: {},
     };
 
-    const { fieldConfigs } = mapFormMetadata(form, generateFormDefinition({ form, dataSchema }));
+    const { fieldConfigs } = mapFormMetadata(form, generateFormDefinition({ form, dataSchema, featureFlags: {isRelationshipSupported: true} }));
 
     expect('Teachers' in fieldConfigs).toBe(true);
     expect(fieldConfigs.Teachers.isArray).toBe(true);
@@ -117,7 +117,7 @@ describe('mapFormMetaData', () => {
       cta: {},
     };
 
-    const { fieldConfigs } = mapFormMetadata(form, generateFormDefinition({ form, dataSchema }));
+    const { fieldConfigs } = mapFormMetadata(form, generateFormDefinition({ form, dataSchema , featureFlags: {isRelationshipSupported: true}}));
 
     expect('CPKStudent' in fieldConfigs).toBe(true);
     expect(fieldConfigs.CPKStudent.relationship).toStrictEqual({
