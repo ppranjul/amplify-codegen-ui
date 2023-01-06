@@ -10,7 +10,7 @@ jobs:
   amplify-cli-tests:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Studio Codegen
+      - name: Checkout Studio Codegen token rotation
         uses: actions/checkout@v2
         with:
           path: amplify-codegen-ui
